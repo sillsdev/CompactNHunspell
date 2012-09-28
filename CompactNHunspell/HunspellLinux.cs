@@ -62,7 +62,8 @@ namespace CompactNHunspell
             this.process = new Process();
             this.process.StartInfo.UseShellExecute = false;
             this.process.StartInfo.RedirectStandardInput = true;
-            this.process.StartInfo.FileName = "hunspell -d " + affFileName;
+            this.process.StartInfo.FileName = "hunspell";
+            this.process.StartInfo.Arguments = "-d " + affFileName;
             this.process.StartInfo.RedirectStandardOutput = true;
             this.process.Start();
             this.process.OutputDataReceived += (sender, e) => 
