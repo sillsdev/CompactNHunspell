@@ -1,0 +1,16 @@
+[Oo]bj
+[Bb]in
+*.user*
+*.suo
+*.[Cc]ache
+*.bak
+*.ncb
+*.log 
+*.DS_Store
+[Tt]humbs.db 
+test-results
+*.pidb
+StyleCopViolations.xml
+dll/*
+*TestResult.xml
+*.csproj~
