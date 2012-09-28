@@ -11,16 +11,43 @@ namespace CompactNHunspell
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.InteropServices;
-
+ 
+    /// <summary>
+    /// Nhunspell wrapper.
+    /// </summary>
+    /// <exception cref='FileNotFoundException'>
+    /// Is thrown when a file path argument specifies a file that does not exist.
+    /// </exception>
+    /// <exception cref='InvalidOperationException'>
+    /// Is thrown when an operation cannot be performed.
+    /// </exception>
     public class NHunspellWrapper : IDisposable
     {
+        /// <summary>
+        /// The speller for spell checking
+        /// </summary>
         private IHunspell speller;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
+        /// </summary>
+        /// <param name='affFile'>
+        /// Aff file.
+        /// </param>
+        /// <param name='dictFile'>
+        /// Dict file.
+        /// </param>
         public NHunspellWrapper(string affFile, string dictFile)
         {
             Load(affFile, dictFile);
         }
 		
+        /// <summary>
+        /// Gets a value indicating whether this instance is disposed.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if this instance is disposed; otherwise, <c>false</c>.
+        /// </value>
         public bool IsDisposed
         {
             get
@@ -61,7 +88,16 @@ namespace CompactNHunspell
 			}
         }
 
-
+        /// <summary>
+        /// Checks if a word is spelled correctly
+        /// </summary>
+        /// <param name='word'>
+        /// Word to check.
+        /// </param>
+        /// <exception cref='InvalidOperationException'>
+        /// Is thrown when an operation cannot be performed.
+        /// </exception>
+        /// <returns>True if the word is spelled correctly</returns>
         public bool Spell(string word)
         {
             if (this.speller == null)
@@ -71,7 +107,17 @@ namespace CompactNHunspell
 
             return this.speller.Spell(word);
         }
-
+  
+        /// <summary>
+        /// Releases all resource used by the <see cref="CompactNHunspell.NHunspellWrapper"/> object.
+        /// </summary>
+        /// <remarks>
+        /// Call <see cref="Dispose"/> when you are finished using the <see cref="CompactNHunspell.NHunspellWrapper"/>.
+        /// The <see cref="Dispose"/> method leaves the <see cref="CompactNHunspell.NHunspellWrapper"/> in an unusable
+        /// state. After calling <see cref="Dispose"/>, you must release all references to the
+        /// <see cref="CompactNHunspell.NHunspellWrapper"/> so the garbage collector can reclaim the memory that the
+        /// <see cref="CompactNHunspell.NHunspellWrapper"/> was occupying.
+        /// </remarks>
         public void Dispose()
         {
             if (!this.IsDisposed)
