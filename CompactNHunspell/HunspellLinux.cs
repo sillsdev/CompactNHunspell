@@ -10,6 +10,7 @@ namespace CompactNHunspell
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     
     /// <summary>
@@ -46,10 +47,22 @@ namespace CompactNHunspell
         /// </param>
         public void Init(string affFile, string dictFile)
         {
+            if (!File.Exists(affFile) || !File.Exists(dictFile))
+            {
+                throw new InvalidOperationException("Dict or aff file does not exist");
+            }
+            
+            var affFileName = GetFileName(affFile);
+            var dictFileName = GetFileName(dictFile);
+            if (!affFileName.Equals(dictFileName))
+            {
+                throw new InvalidOperationException("Cultures for dictionary and aff file or not the same");
+            }
+            
             this.process = new Process();
             this.process.StartInfo.UseShellExecute = false;
             this.process.StartInfo.RedirectStandardInput = true;
-            this.process.StartInfo.FileName = "hunspell";
+            this.process.StartInfo.FileName = "hunspell -d " + affFileName;
             this.process.StartInfo.RedirectStandardOutput = true;
             this.process.Start();
             this.process.OutputDataReceived += (sender, e) => 
@@ -115,6 +128,27 @@ namespace CompactNHunspell
             {
                 this.process.Kill();
             }
+        }
+        
+        /// <summary>
+        /// Gets the name of the file.
+        /// </summary>
+        /// <returns>
+        /// The file name.
+        /// </returns>
+        /// <param name='path'>
+        /// Path of the file.
+        /// </param>
+        private static string GetFileName(string path)
+        {
+            string fileName = Path.GetFileName(path);
+            if (path.Contains("."))
+            {
+                string[] parts = fileName.Split('.');
+                fileName = parts[0];
+            }
+            
+            return fileName;
         }
     }
 }

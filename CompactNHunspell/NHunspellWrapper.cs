@@ -24,6 +24,11 @@ namespace CompactNHunspell
     public class NHunspellWrapper : IDisposable
     {
         /// <summary>
+        /// The cached words and their status
+        /// </summary>
+        private IDictionary<string, bool> cachedWords = new Dictionary<string, bool>(StringComparer.CurrentCulture);
+        
+        /// <summary>
         /// The speller for spell checking
         /// </summary>
         private IHunspell speller;
@@ -120,8 +125,14 @@ namespace CompactNHunspell
             {
                 throw new InvalidOperationException("Speller not initialized");
             }
-
-            return this.speller.Spell(word);
+            
+            if (!this.cachedWords.ContainsKey(word))
+            {
+                var result = this.speller.Spell(word);
+                this.cachedWords[word] = result;
+            }
+         
+            return this.cachedWords[word];
         }
   
         /// <summary>
