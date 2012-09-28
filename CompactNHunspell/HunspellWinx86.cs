@@ -77,27 +77,43 @@ namespace CompactNHunspell
         }
         
         /// <summary>
-        /// Init the specified affixData, affixDataSize, dictionaryData, dictionaryDataSize and key to the instance
+        /// Inits the instance.
         /// </summary>
+        /// <returns>
+        /// The instance.
+        /// </returns>
+        /// <param name='affFile'>
+        /// Aff file.
+        /// </param>
+        /// <param name='dictFile'>
+        /// Dict file.
+        /// </param>
+        protected override IntPtr InitInstance(string affFile, string dictFile)
+        {
+            return this.WindowsInit(affFile, dictFile);
+        }
+        
+        /// <summary>
+        /// Invoke the instance with data
+        /// </summary>
+        /// <returns>
+        /// The instance pointer.
+        /// </returns>
         /// <param name='affixData'>
         /// Affix data.
         /// </param>
-        /// <param name='affixDataSize'>
-        /// Affix data size.
+        /// <param name='affixSize'>
+        /// Affix size.
         /// </param>
-        /// <param name='dictionaryData'>
-        /// Dictionary data.
+        /// <param name='dictData'>
+        /// Dict data.
         /// </param>
-        /// <param name='dictionaryDataSize'>
-        /// Dictionary data size.
+        /// <param name='dictSize'>
+        /// Dict size.
         /// </param>
-        /// <param name='key'>
-        /// Key (if encrypted)
-        /// </param>
-        /// <returns>Instance pointer</returns>
-        protected override IntPtr Init(byte[] affixData, IntPtr affixDataSize, byte[] dictionaryData, IntPtr dictionaryDataSize, string key)
+        protected override IntPtr DataInvoke(byte[] affixData, IntPtr affixSize, byte[] dictData, IntPtr dictSize)
         {
-            return HunspellInit(affixData, affixDataSize, dictionaryData, dictionaryDataSize, key);
+            return HunspellInit(affixData, affixSize, dictData, dictSize, null);
         }
         
         /// <summary>

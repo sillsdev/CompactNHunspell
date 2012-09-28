@@ -8,10 +8,8 @@
 namespace CompactNHunspell
 {
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
-    using System.Linq;
+    using System.Runtime.InteropServices;
     
     /// <summary>
     /// Hunspell linux.
@@ -19,137 +17,86 @@ namespace CompactNHunspell
     /// <exception cref='InvalidOperationException'>
     /// Is thrown when an operation cannot be performed because the process is not initialized
     /// </exception>
-    internal class HunspellLinux : IHunspell
+    internal class HunspellLinux : BaseHunspell
     {
-        /* *
-         * This is not the proper way to call hunspell
-         * Need to work with the libhunspell in the future
-         * */
+        /// <summary>
+        /// Hunspell free.
+        /// </summary>
+        /// <param name='handle'>
+        /// Handle to release.
+        /// </param>
+        [DllImport("libhunspell-1.3.so")]
+        public static extern void Hunspell_destroy(IntPtr handle);
+  
+        /// <summary>
+        /// Hunspell construction
+        /// </summary>
+        /// <returns>Instance pointer</returns>
+        /// <param name='affixData'>
+        /// Affix data.
+        /// </param>
+        /// <param name='dictionaryData'>
+        /// Dictionary data.
+        /// </param>
+        [DllImport("libhunspell-1.3.so")]
+        public static extern IntPtr Hunspell_create(string affixData, string dictionaryData);
+  
+        /// <summary>
+        /// Check the spelling of a word
+        /// </summary>
+        /// <returns>
+        /// True if the word is spelled correctly
+        /// </returns>
+        /// <param name='handle'>
+        /// Instance handle
+        /// </param>
+        /// <param name='word'>
+        /// Word to check
+        /// </param>
+        [DllImport("libhunspell-1.3.so")]
+        public static extern bool Hunspell_spell(IntPtr handle, string word);
         
         /// <summary>
-        /// The output from the process
+        /// Free the specified handle.
         /// </summary>
-        private IList<string> output = new List<string>();
+        /// <param name='handle'>
+        /// Handle to free.
+        /// </param>
+        protected override void Free(IntPtr handle)
+        {
+            Hunspell_destroy(handle);
+        }
         
         /// <summary>
-        /// The process in which hunspell is running.
+        /// Inits the instance.
         /// </summary>
-        private Process process = null;
-        
-        /// <summary>
-        /// Init the specified affFile and dictFile to the process instance
-        /// </summary>
+        /// <returns>
+        /// The instance.
+        /// </returns>
         /// <param name='affFile'>
         /// Aff file.
         /// </param>
         /// <param name='dictFile'>
         /// Dict file.
         /// </param>
-        public void Init(string affFile, string dictFile)
+        protected override IntPtr InitInstance(string affFile, string dictFile)
         {
-            if (!File.Exists(affFile) || !File.Exists(dictFile))
-            {
-                throw new InvalidOperationException("Dict or aff file does not exist");
-            }
-            
-            var affFileName = GetFileName(affFile);
-            var dictFileName = GetFileName(dictFile);
-            if (!affFileName.Equals(dictFileName))
-            {
-                throw new InvalidOperationException("Cultures for dictionary and aff file or not the same");
-            }
-            
-            this.process = new Process();
-            this.process.StartInfo.UseShellExecute = false;
-            this.process.StartInfo.RedirectStandardInput = true;
-            this.process.StartInfo.FileName = "hunspell";
-            this.process.StartInfo.Arguments = "-d " + affFileName;
-            this.process.StartInfo.RedirectStandardOutput = true;
-            this.process.Start();
-            this.process.OutputDataReceived += (sender, e) => 
-            {
-                lock (this.output)
-                {
-                    this.output.Add(((DataReceivedEventArgs)e).Data);
-                }
-            };
-            
-            this.process.BeginOutputReadLine();
+            return Hunspell_create(affFile, dictFile);
         }
-        
+  
         /// <summary>
-        /// Check the spelling of a word
+        /// Spell check the word
         /// </summary>
+        /// <param name='handle'>
+        /// Handle to use
+        /// </param>
         /// <param name='word'>
         /// Word to check
         /// </param>
-        /// <exception cref='InvalidOperationException'>
-        /// Is thrown when an operation cannot be performed.
-        /// </exception>
-        /// <returns>True if the word is spelled properly</returns>
-        public bool Spell(string word)
+        /// <returns>True if the word is properly spelled</returns>
+        protected override bool Spell(IntPtr handle, string word)
         {
-            if (this.process == null)
-            {
-                throw new InvalidOperationException("Not initialized");
-            }
-            
-            this.process.StandardInput.WriteLine(word);
-            bool done = false;
-            bool spelledCorrectly = false;
-            while (!done)
-            {
-                System.Threading.Thread.Sleep(100);
-                lock (this.output)
-                {
-                    foreach (var item in this.output.ToArray())
-                    {
-                        if (string.IsNullOrEmpty(item))
-                        {
-                            this.output.Clear();
-                            done = true;
-                        }
-                        else
-                        {
-                            spelledCorrectly = !item.StartsWith("&");
-                        }
-                    }
-                }
-            }
-            
-            return spelledCorrectly;
-        }
-        
-        /// <summary>
-        /// Free this instance.
-        /// </summary>
-        public void Free()
-        {
-            if (this.process != null)
-            {
-                this.process.Kill();
-            }
-        }
-        
-        /// <summary>
-        /// Gets the name of the file.
-        /// </summary>
-        /// <returns>
-        /// The file name.
-        /// </returns>
-        /// <param name='path'>
-        /// Path of the file.
-        /// </param>
-        private static string GetFileName(string path)
-        {
-            string fileName = Path.GetFileName(path);
-            if (path.Contains("."))
-            {
-                string[] parts = fileName.Split('.');
-                fileName = parts[0];
-            }
-            
-            return fileName;
+            return Hunspell_spell(handle, word);
         }
     }
 }

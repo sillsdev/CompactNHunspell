@@ -7,7 +7,3 @@ Requirements
 ============
 * Linux requires hunspell to be installed
 * Windows requires the Hunspellx86 or Hunspellx64 libraries (depending on architecture)
-
-TODO
-====
-* Switch to libhunspell.so

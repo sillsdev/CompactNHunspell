@@ -44,7 +44,6 @@
     <Compile Include="HunspellWinx86.cs" />
     <Compile Include="HunspellLinux.cs" />
     <Compile Include="BaseHunspell.cs" />
-    <Compile Include="IHunspell.cs" />
     <Compile Include="NHunspellWrapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

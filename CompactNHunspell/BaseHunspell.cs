@@ -18,7 +18,7 @@ namespace CompactNHunspell
     /// <exception cref='InvalidOperationException'>
     /// Is thrown when an operation cannot be performed because the speller is not initialized
     /// </exception>
-    internal abstract class BaseHunspell : IHunspell
+    internal abstract class BaseHunspell
     {
         /// <summary>
         /// The handle to the process
@@ -55,6 +55,34 @@ namespace CompactNHunspell
         /// Dict file to load
         /// </param>
         public void Init(string affFile, string dictFile)
+        {    
+            this.handle = this.InitInstance(affFile, dictFile);
+        }
+  
+        /// <summary>
+        /// Free this instance.
+        /// </summary>
+        public void Free()
+        {
+            if (this.handle != IntPtr.Zero)
+            {
+                this.Free(this.handle);
+            }
+        }
+        
+        /// <summary>
+        /// Windows initialize routine
+        /// </summary>
+        /// <returns>
+        /// IntPtr to the instance
+        /// </returns>
+        /// <param name='affFile'>
+        /// Aff file.
+        /// </param>
+        /// <param name='dictFile'>
+        /// Dict file.
+        /// </param>
+        protected IntPtr WindowsInit(string affFile, string dictFile)
         {
             byte[] affixData;
             using (FileStream stream = File.OpenRead(affFile))
@@ -74,18 +102,30 @@ namespace CompactNHunspell
                 }
             }
             
-            this.handle = this.Init(affixData, new IntPtr(affixData.Length), dictionaryData, new IntPtr(dictionaryData.Length), null);
+            return this.DataInvoke(affixData, new IntPtr(affixData.Length), dictionaryData, new IntPtr(dictionaryData.Length));
         }
-  
+        
         /// <summary>
-        /// Free this instance.
+        /// Provides an invoke init with data streams instead of file names
         /// </summary>
-        public void Free()
+        /// <returns>
+        /// The instance pointer
+        /// </returns>
+        /// <param name='affixData'>
+        /// Affix data.
+        /// </param>
+        /// <param name='affixSize'>
+        /// Affix size.
+        /// </param>
+        /// <param name='dictData'>
+        /// Dictionary data.
+        /// </param>
+        /// <param name='dictSize'>
+        /// Dictionary size.
+        /// </param>
+        protected virtual IntPtr DataInvoke(byte[] affixData, IntPtr affixSize, byte[] dictData, IntPtr dictSize)
         {
-            if (this.handle != IntPtr.Zero)
-            {
-                this.Free(this.handle);
-            }
+            return IntPtr.Zero;
         }
   
         /// <summary>
@@ -97,25 +137,18 @@ namespace CompactNHunspell
         protected abstract void Free(IntPtr handle);
   
         /// <summary>
-        /// Init the specified affixData, affixDataSize, dictionaryData, dictionaryDataSize and key to the instance
+        /// Inits the instance.
         /// </summary>
-        /// <param name='affixData'>
-        /// Affix data.
+        /// <returns>
+        /// The instance.
+        /// </returns>
+        /// <param name='affFile'>
+        /// Aff file.
         /// </param>
-        /// <param name='affixDataSize'>
-        /// Affix data size.
+        /// <param name='dictFile'>
+        /// Dict file.
         /// </param>
-        /// <param name='dictionaryData'>
-        /// Dictionary data.
-        /// </param>
-        /// <param name='dictionaryDataSize'>
-        /// Dictionary data size.
-        /// </param>
-        /// <param name='key'>
-        /// Key (if encrypted)
-        /// </param>
-        /// <returns>Instance pointer</returns>
-        protected abstract IntPtr Init([MarshalAs(UnmanagedType.LPArray)] byte[] affixData, IntPtr affixDataSize, [MarshalAs(UnmanagedType.LPArray)] byte[] dictionaryData, IntPtr dictionaryDataSize, string key);
+        protected abstract IntPtr InitInstance(string affFile, string dictFile);
   
         /// <summary>
         /// Spell check the word
@@ -127,6 +160,6 @@ namespace CompactNHunspell
         /// Word to check
         /// </param>
         /// <returns>True if the word is properly spelled</returns>
-        protected abstract bool Spell(IntPtr handle, [MarshalAs(UnmanagedType.LPWStr)] string word);
+        protected abstract bool Spell(IntPtr handle, string word);
     }
 }

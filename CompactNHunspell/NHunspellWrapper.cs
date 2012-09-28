@@ -31,7 +31,7 @@ namespace CompactNHunspell
         /// <summary>
         /// The speller for spell checking
         /// </summary>
-        private IHunspell speller;
+        private BaseHunspell speller;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
