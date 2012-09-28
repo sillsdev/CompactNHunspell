@@ -37,7 +37,7 @@ namespace CompactNHunspell
         /// <returns>True if the word is spelled correctly</returns>
         public bool Spell(string word)
         {
-            if (handle == IntPtr.Zero)
+            if (this.handle == IntPtr.Zero)
             {
                 throw new InvalidOperationException("Library not initialized");
             }
@@ -82,7 +82,7 @@ namespace CompactNHunspell
         /// </summary>
         public void Free()
         {
-            if (handle != IntPtr.Zero)
+            if (this.handle != IntPtr.Zero)
             {
                 this.Free(this.handle);
             }

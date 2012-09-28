@@ -39,9 +39,9 @@ namespace CompactNHunspell
         /// </param>
         public NHunspellWrapper(string affFile, string dictFile)
         {
-            Load(affFile, dictFile);
+            this.Load(affFile, dictFile);
         }
-		
+        
         /// <summary>
         /// Gets a value indicating whether this instance is disposed.
         /// </summary>
@@ -55,7 +55,19 @@ namespace CompactNHunspell
                 return this.speller == null;
             }
         }
-
+  
+        /// <summary>
+        /// Load the specified affFile and dictFile.
+        /// </summary>
+        /// <param name='affFile'>
+        /// Aff file.
+        /// </param>
+        /// <param name='dictFile'>
+        /// Dict file.
+        /// </param>
+        /// <exception cref='FileNotFoundException'>
+        /// Is thrown when a file path argument specifies a file that does not exist.
+        /// </exception>
         public void Load(string affFile, string dictFile)
         {
             affFile = Path.GetFullPath(affFile);
@@ -69,23 +81,27 @@ namespace CompactNHunspell
             {
                 throw new FileNotFoundException("DIC File not found: " + dictFile);
             }
-			
-			if(System.Environment.OSVersion.Platform == PlatformID.Unix){
-				this.speller = new HunspellLinux();
-			}else{
-            if (IntPtr.Size == 4)
+            
+            if (System.Environment.OSVersion.Platform == PlatformID.Unix) 
             {
-                this.speller = new HunspellWinx86();
+                this.speller = new HunspellLinux();
             }
             else
             {
-                this.speller = new HunspellWinx64();
+                if (IntPtr.Size == 4)
+                {
+                    this.speller = new HunspellWinx86();
+                }
+                else
+                {
+                    this.speller = new HunspellWinx64();
+                }
             }
-			}
-			
-			if(this.speller != null){
-            this.speller.Init(affFile, dictFile);
-			}
+            
+            if (this.speller != null)
+            {
+                this.speller.Init(affFile, dictFile);
+            }
         }
 
         /// <summary>

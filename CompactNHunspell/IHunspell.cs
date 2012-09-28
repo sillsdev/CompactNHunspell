@@ -29,6 +29,7 @@ namespace CompactNHunspell
         /// <param name='word'>
         /// True if the word is spelled correctly
         /// </param>
+        /// <returns>True if the word is spelled properly</returns>
         bool Spell(string word);
         
         /// <summary>

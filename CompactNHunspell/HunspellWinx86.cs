@@ -10,9 +10,11 @@ namespace CompactNHunspell
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Runtime.InteropServices;
-
+ 
+    /// <summary>
+    /// Hunspell Windows x86
+    /// </summary>
     internal class HunspellWinx86 : BaseHunspell
     {
         /// <summary>
