@@ -12,7 +12,7 @@ namespace CompactNHunspell
     using System.Runtime.InteropServices;
     
     /// <summary>
-    /// Hunspell linux.
+    /// Hunspell Linux.
     /// </summary>
     /// <exception cref='InvalidOperationException'>
     /// Is thrown when an operation cannot be performed because the process is not initialized
@@ -68,13 +68,13 @@ namespace CompactNHunspell
         }
         
         /// <summary>
-        /// Inits the instance.
+        /// Initializes the instance.
         /// </summary>
         /// <returns>
         /// The instance.
         /// </returns>
         /// <param name='affFile'>
-        /// Aff file.
+        /// Affix file.
         /// </param>
         /// <param name='dictFile'>
         /// Dict file.

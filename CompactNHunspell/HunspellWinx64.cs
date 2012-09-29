@@ -27,7 +27,7 @@ namespace CompactNHunspell
         public static extern void HunspellFree(IntPtr handle);
   
         /// <summary>
-        /// Init hunspell.
+        /// Initializes Hunspell.
         /// </summary>
         /// <returns>
         /// Pointer to the instance
@@ -77,13 +77,13 @@ namespace CompactNHunspell
         }
         
         /// <summary>
-        /// Inits the instance.
+        /// Initializes the instance.
         /// </summary>
         /// <returns>
         /// The instance.
         /// </returns>
         /// <param name='affFile'>
-        /// Aff file.
+        /// Affix file.
         /// </param>
         /// <param name='dictFile'>
         /// Dict file.

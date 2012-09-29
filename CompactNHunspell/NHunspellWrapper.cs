@@ -13,7 +13,7 @@ namespace CompactNHunspell
     using System.Runtime.InteropServices;
  
     /// <summary>
-    /// Nhunspell wrapper.
+    /// NHunspell wrapper.
     /// </summary>
     /// <exception cref='FileNotFoundException'>
     /// Is thrown when a file path argument specifies a file that does not exist.
@@ -37,7 +37,7 @@ namespace CompactNHunspell
         /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
         /// </summary>
         /// <param name='affFile'>
-        /// Aff file.
+        /// Affix file.
         /// </param>
         /// <param name='dictFile'>
         /// Dict file.
@@ -62,10 +62,10 @@ namespace CompactNHunspell
         }
   
         /// <summary>
-        /// Load the specified affFile and dictFile.
+        /// Load the specified affixFile and dictFile.
         /// </summary>
         /// <param name='affFile'>
-        /// Aff file.
+        /// Affix file.
         /// </param>
         /// <param name='dictFile'>
         /// Dict file.

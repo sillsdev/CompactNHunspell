@@ -13,7 +13,7 @@ namespace CompactNHunspell
     using System.Runtime.InteropServices;
     
     /// <summary>
-    /// Base hunspell implementation for spelling requests
+    /// Base Hunspell implementation for spelling requests
     /// </summary>
     /// <exception cref='InvalidOperationException'>
     /// Is thrown when an operation cannot be performed because the speller is not initialized
@@ -46,10 +46,10 @@ namespace CompactNHunspell
         }
   
         /// <summary>
-        /// Init the specified affFile and dictFile to the instance.
+        /// Initialize the specified affix File and dict file to the instance.
         /// </summary>
         /// <param name='affFile'>
-        /// Aff file to load
+        /// Affix file to load
         /// </param>
         /// <param name='dictFile'>
         /// Dict file to load
@@ -74,10 +74,10 @@ namespace CompactNHunspell
         /// Windows initialize routine
         /// </summary>
         /// <returns>
-        /// IntPtr to the instance
+        /// Pointer to the instance
         /// </returns>
         /// <param name='affFile'>
-        /// Aff file.
+        /// Affix file.
         /// </param>
         /// <param name='dictFile'>
         /// Dict file.
@@ -106,7 +106,7 @@ namespace CompactNHunspell
         }
         
         /// <summary>
-        /// Provides an invoke init with data streams instead of file names
+        /// Provides an invoke initializing with data streams instead of file names
         /// </summary>
         /// <returns>
         /// The instance pointer
@@ -137,13 +137,13 @@ namespace CompactNHunspell
         protected abstract void Free(IntPtr handle);
   
         /// <summary>
-        /// Inits the instance.
+        /// Initializes the instance.
         /// </summary>
         /// <returns>
         /// The instance.
         /// </returns>
         /// <param name='affFile'>
-        /// Aff file.
+        /// Affix file.
         /// </param>
         /// <param name='dictFile'>
         /// Dict file.
