@@ -18,12 +18,17 @@ namespace CompactNHunspell
     internal class HunspellWinx86 : BaseHunspell
     {
         /// <summary>
+        /// Library for the reference assembly
+        /// </summary>
+        private const string Library = "Hunspellx86.dll";
+        
+        /// <summary>
         /// Hunspell free.
         /// </summary>
         /// <param name='handle'>
         /// Handle to release.
         /// </param>
-        [DllImport("Hunspellx86.dll")]
+        [DllImport(Library)]
         public static extern void HunspellFree(IntPtr handle);
         
         /// <summary>
@@ -47,7 +52,7 @@ namespace CompactNHunspell
         /// <param name='key'>
         /// Key if encrypted.
         /// </param>
-        [DllImport("Hunspellx86.dll")]
+        [DllImport(Library)]
         public static extern IntPtr HunspellInit([MarshalAs(UnmanagedType.LPArray)] byte[] affixData, IntPtr affixDataSize, [MarshalAs(UnmanagedType.LPArray)] byte[] dictionaryData, IntPtr dictionaryDataSize, string key);
         
         /// <summary>
@@ -62,7 +67,7 @@ namespace CompactNHunspell
         /// <param name='word'>
         /// Word to check
         /// </param>
-        [DllImport("Hunspellx86.dll")]
+        [DllImport(Library)]
         public static extern bool HunspellSpell(IntPtr handle, [MarshalAs(UnmanagedType.LPWStr)] string word);
         
         /// <summary>
@@ -77,7 +82,7 @@ namespace CompactNHunspell
         /// <returns>
         /// True if word is added
         /// </returns>
-        [DllImport("Hunspellx86.dll")]
+        [DllImport(Library)]
         public static extern bool HunspellAdd(IntPtr handle, string word);
         
         /// <summary>
