@@ -66,6 +66,21 @@ namespace CompactNHunspell
         public static extern bool HunspellSpell(IntPtr handle, [MarshalAs(UnmanagedType.LPWStr)] string word);
         
         /// <summary>
+        /// Add the word to the instance
+        /// </summary>
+        /// <param name='handle'>
+        /// Instance handle
+        /// </param>
+        /// <param name='word'>
+        /// Word to add
+        /// </param>
+        /// <returns>
+        /// True if word is added
+        /// </returns>
+        [DllImport("Hunspellx64.dll")]
+        public static extern bool HunspellAdd(IntPtr handle, string word);
+        
+        /// <summary>
         /// Free the specified handle.
         /// </summary>
         /// <param name='handle'>
@@ -129,6 +144,20 @@ namespace CompactNHunspell
         protected override bool Spell(IntPtr handle, string word)
         {
             return HunspellSpell(handle, word);
+        }
+        
+        /// <summary>
+        /// Adds the word to the dictionary
+        /// </summary>
+        /// <param name='pointer'>
+        /// Pointer to the instance
+        /// </param>
+        /// <param name='word'>
+        /// Word to add
+        /// </param>
+        protected override void AddWord(IntPtr pointer, string word)
+        {
+            HunspellAdd(pointer, word);
         }
     }
 }

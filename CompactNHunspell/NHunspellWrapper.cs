@@ -156,5 +156,24 @@ namespace CompactNHunspell
                 }
             }
         }
+        
+        /// <summary>
+        /// Add the specified word to the dictionary
+        /// </summary>
+        /// <param name='word'>
+        /// Word to add
+        /// </param>
+        /// <exception cref='InvalidOperationException'>
+        /// Is thrown when an operation cannot be performed.
+        /// </exception>
+        public void Add(string word)
+        {
+            if (this.speller == null)
+            {
+                throw new InvalidOperationException("Speller not initialized");
+            }
+            
+            this.speller.Add(word);
+        }
     }
 }
