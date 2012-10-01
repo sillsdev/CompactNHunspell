@@ -18,12 +18,17 @@ namespace CompactNHunspell
     internal class HunspellWinx64 : BaseHunspell
     {
         /// <summary>
+        /// Library for the reference assembly
+        /// </summary>
+        private const string Library = "Hunspellx64.dll";
+        
+        /// <summary>
         /// Hunspell free.
         /// </summary>
         /// <param name='handle'>
         /// Handle to release.
         /// </param>
-        [DllImport("Hunspellx64.dll")]
+        [DllImport(Library)]
         public static extern void HunspellFree(IntPtr handle);
   
         /// <summary>
@@ -47,7 +52,7 @@ namespace CompactNHunspell
         /// <param name='key'>
         /// Key if encrypted.
         /// </param>
-        [DllImport("Hunspellx64.dll")]
+        [DllImport(Library)]
         public static extern IntPtr HunspellInit([MarshalAs(UnmanagedType.LPArray)] byte[] affixData, IntPtr affixDataSize, [MarshalAs(UnmanagedType.LPArray)] byte[] dictionaryData, IntPtr dictionaryDataSize, string key);
   
         /// <summary>
@@ -62,8 +67,23 @@ namespace CompactNHunspell
         /// <param name='word'>
         /// Word to check
         /// </param>
-        [DllImport("Hunspellx64.dll")]
+        [DllImport(Library)]
         public static extern bool HunspellSpell(IntPtr handle, [MarshalAs(UnmanagedType.LPWStr)] string word);
+        
+        /// <summary>
+        /// Add the word to the instance
+        /// </summary>
+        /// <param name='handle'>
+        /// Instance handle
+        /// </param>
+        /// <param name='word'>
+        /// Word to add
+        /// </param>
+        /// <returns>
+        /// True if word is added
+        /// </returns>
+        [DllImport(Library)]
+        public static extern bool HunspellAdd(IntPtr handle, string word);
         
         /// <summary>
         /// Free the specified handle.
@@ -129,6 +149,20 @@ namespace CompactNHunspell
         protected override bool Spell(IntPtr handle, string word)
         {
             return HunspellSpell(handle, word);
+        }
+        
+        /// <summary>
+        /// Adds the word to the dictionary
+        /// </summary>
+        /// <param name='pointer'>
+        /// Pointer to the instance
+        /// </param>
+        /// <param name='word'>
+        /// Word to add
+        /// </param>
+        protected override void AddWord(IntPtr pointer, string word)
+        {
+            HunspellAdd(pointer, word);
         }
     }
 }

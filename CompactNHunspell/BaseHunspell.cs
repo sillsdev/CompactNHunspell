@@ -71,6 +71,31 @@ namespace CompactNHunspell
         }
         
         /// <summary>
+        /// Add the specified word to the internal dictionary
+        /// </summary>
+        /// <param name='word'>
+        /// Word to add to the dictionary.
+        /// </param>
+        public void Add(string word)
+        {
+            if (this.handle != IntPtr.Zero)
+            {
+                this.AddWord(this.handle, word);
+            }
+        }
+        
+        /// <summary>
+        /// Adds the word to the dictionary
+        /// </summary>
+        /// <param name='pointer'>
+        /// Pointer to the instance
+        /// </param>
+        /// <param name='word'>
+        /// Word to add
+        /// </param>
+        protected abstract void AddWord(IntPtr pointer, string word);
+        
+        /// <summary>
         /// Windows initialize routine
         /// </summary>
         /// <returns>
