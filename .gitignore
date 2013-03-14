@@ -10,7 +10,7 @@
 [Tt]humbs.db 
 test-results
 *.pidb
-StyleCopViolations.xml
+StyleCop.Violations.xml
 dll/*
 *TestResult.xml
 *.csproj~
