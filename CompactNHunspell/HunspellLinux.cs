@@ -73,7 +73,7 @@ namespace CompactNHunspell
         /// <returns>
         /// True if word is added
         /// </returns>
-        [DllImport("libhunspell-1.3.so")]
+        [DllImport(LibHunspell)]
         public static extern bool Hunspell_add(IntPtr handle, string word);
         
         /// <summary>
