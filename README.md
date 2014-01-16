@@ -4,7 +4,7 @@ NHunspell compact implementation for spell checking in Windows &amp; Linux from 
 
 Usage
 =====
-CompactNHunspell requires input of the affix/dict files to locate for Hunspell to use.
+CompactNHunspell requires input of the affix/dict files. These files are required to use the underlying hunspell functionality.
 
 Requirements
 ============
