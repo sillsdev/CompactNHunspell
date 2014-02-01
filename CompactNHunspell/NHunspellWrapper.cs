@@ -24,6 +24,11 @@ namespace CompactNHunspell
     public class NHunspellWrapper : IDisposable
     {
         /// <summary>
+        /// Flush the buffer to disk when it hits this length
+        /// </summary>
+        private const int FlushAt = 8192;
+
+        /// <summary>
         /// The cached words and their status
         /// </summary>
         private IDictionary<string, bool> cachedWords = new Dictionary<string, bool>(StringComparer.CurrentCulture);
@@ -34,9 +39,19 @@ namespace CompactNHunspell
         private BaseHunspell speller;
 
         /// <summary>
-        /// Output writer for trace/debug messages
+        /// Indicates if the buffer is in use for logging
         /// </summary>
-        private StreamWriter outputWriter;
+        private bool useBuffer;
+
+        /// <summary>
+        /// Buffer file to save to
+        /// </summary>
+        private string bufferFile;
+
+        /// <summary>
+        /// Buffer diagnostic messages
+        /// </summary>
+        private System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 
         /// <summary>
         /// Indicates if verbose console logging should be on
@@ -61,11 +76,11 @@ namespace CompactNHunspell
                 bool.TryParse(verboseSetting, out this.verbose);
             }
 
-            var traceFile = System.Configuration.ConfigurationManager.AppSettings["CompactNHunspell.TraceFile"];
-            this.WriteDiagnostics(traceFile);
-            if (!string.IsNullOrEmpty(traceFile))
+            this.bufferFile = System.Configuration.ConfigurationManager.AppSettings["CompactNHunspell.TraceFile"];
+            this.WriteDiagnostics(this.bufferFile);
+            if (!string.IsNullOrEmpty(this.bufferFile))
             {
-                this.outputWriter = new StreamWriter(traceFile, false);
+                this.useBuffer = true;
                 this.WriteMessage("Trace stream initialized");
             }
 
@@ -200,12 +215,7 @@ namespace CompactNHunspell
                 }
 
                 this.WriteMessage("About to close output writer");
-                if (this.outputWriter != null)
-                {
-                    this.outputWriter.Flush();
-                    this.outputWriter.Dispose();
-                    this.outputWriter = null;
-                }
+                this.FlushBuffer(true);
             }
         }
         
@@ -233,18 +243,29 @@ namespace CompactNHunspell
         }
 
         /// <summary>
+        /// Create a diagnostic message
+        /// </summary>
+        /// <param name='type'>Type requesting the write</param>
+        /// <param name='message'>Trace/debug message</param>
+        /// <returns>Diagnostic message to output</returns>
+        private static string CreateMessage(Type type, string message)
+        {
+            return type.Name + " -> " + message;
+        }
+
+        /// <summary>
         /// Write a trace message using a given type
         /// </summary>
         /// <param name='type'>Type requesting the write</param>
         /// <param name='message'>Trace/debug message</param>
         private void WriteMessage(Type type, string message)
         {
-            var msg = type.FullName + " -> " + message;
+            var msg = CreateMessage(type, message);
             this.WriteDiagnostics(msg);
-            if (this.outputWriter != null)
+            if (this.useBuffer)
             {
-                this.outputWriter.WriteLine(msg);
-                this.outputWriter.Flush();
+                this.buffer.AppendLine(msg);
+                this.FlushBuffer(false);
             }
         }
    
@@ -267,6 +288,32 @@ namespace CompactNHunspell
         private void WriteMessage(string message)
         {
             this.WriteMessage(typeof(NHunspellWrapper), message);
+        }
+
+        /// <summary>
+        /// Flush the internal buffer to file
+        /// </summary>
+        /// <param name='force'>Force output writing</param>
+        private void FlushBuffer(bool force)
+        {
+            try
+            {
+                if (this.useBuffer)
+                {
+                    if (this.buffer.Length > FlushAt || force)
+                    {
+                        this.buffer.AppendLine(CreateMessage(this.GetType(), "Flushing buffer"));
+                        File.AppendAllText(this.bufferFile, this.buffer.ToString());
+                        this.buffer.Length = 0;
+                        this.buffer.Capacity = 0;
+                    }
+                }
+            }
+            catch
+            {
+                // Can't write to the diagnostic output file, send something to verbose and keep going
+                this.WriteDiagnostics("Unable to flush buffer");
+            }
         }
     }
 }
