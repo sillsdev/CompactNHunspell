@@ -93,7 +93,10 @@ namespace CompactNHunspell
         /// </param>
         protected override void Free(IntPtr handle)
         {
+            this.WriteTraceMessage("Freeing pointer");
+            this.WriteTraceMessage(handle.ToString());
             HunspellFree(handle);
+            this.WriteTraceMessage("Freeing pointer completed");
         }
         
         /// <summary>
@@ -110,6 +113,9 @@ namespace CompactNHunspell
         /// </param>
         protected override IntPtr InitInstance(string affFile, string dictFile)
         {
+            this.WriteTraceMessage("Creating the instance");
+            this.WriteTraceMessage(affFile);
+            this.WriteTraceMessage(dictFile);
             return this.WindowsInit(affFile, dictFile);
         }
         
@@ -133,6 +139,9 @@ namespace CompactNHunspell
         /// </param>
         protected override IntPtr DataInvoke(byte[] affixData, IntPtr affixSize, byte[] dictData, IntPtr dictSize)
         {
+            this.WriteTraceMessage("Calling DataInvoke");
+            this.WriteTraceMessage(affixSize.ToString());
+            this.WriteTraceMessage(dictSize.ToString());
             return HunspellInit(affixData, affixSize, dictData, dictSize, null);
         }
         
@@ -148,6 +157,9 @@ namespace CompactNHunspell
         /// <returns>True if the word is properly spelled</returns>
         protected override bool Spell(IntPtr handle, string word)
         {
+            this.WriteTraceMessage("Performing spell check");
+            this.WriteTraceMessage(handle.ToString());
+            this.WriteTraceMessage(word);
             return HunspellSpell(handle, word);
         }
         
@@ -162,7 +174,11 @@ namespace CompactNHunspell
         /// </param>
         protected override void AddWord(IntPtr pointer, string word)
         {
+            this.WriteTraceMessage("Adding word");
+            this.WriteTraceMessage(pointer.ToString());
+            this.WriteTraceMessage(word);
             HunspellAdd(pointer, word);
+            this.WriteTraceMessage("Word added");
         }
     }
 }

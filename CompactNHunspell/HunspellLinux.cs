@@ -22,7 +22,7 @@ namespace CompactNHunspell
         /// <summary>
         /// Lib Hunspell 1.3
         /// </summary>
-        private const string LibHunspell = "libhunspell-1.3.so";
+        private const string LibHunspell = "libhunspell-1.3.so.0";
 
         /// <summary>
         /// Hunspell free.
@@ -84,7 +84,10 @@ namespace CompactNHunspell
         /// </param>
         protected override void Free(IntPtr handle)
         {
+            this.WriteTraceMessage("Freeing pointer");
+            this.WriteTraceMessage(handle.ToString());
             Hunspell_destroy(handle);
+            this.WriteTraceMessage("Freeing pointer completed");
         }
         
         /// <summary>
@@ -101,6 +104,9 @@ namespace CompactNHunspell
         /// </param>
         protected override IntPtr InitInstance(string affFile, string dictFile)
         {
+            this.WriteTraceMessage("Creating the instance");
+            this.WriteTraceMessage(affFile);
+            this.WriteTraceMessage(dictFile);
             return Hunspell_create(affFile, dictFile);
         }
   
@@ -116,6 +122,9 @@ namespace CompactNHunspell
         /// <returns>True if the word is properly spelled</returns>
         protected override bool Spell(IntPtr handle, string word)
         {
+            this.WriteTraceMessage("Performing spell check");
+            this.WriteTraceMessage(handle.ToString());
+            this.WriteTraceMessage(word);
             return Hunspell_spell(handle, word);
         }
         
@@ -130,7 +139,11 @@ namespace CompactNHunspell
         /// </param>
         protected override void AddWord(IntPtr pointer, string word)
         {
+            this.WriteTraceMessage("Adding word");
+            this.WriteTraceMessage(pointer.ToString());
+            this.WriteTraceMessage(word);
             Hunspell_add(pointer, word);
+            this.WriteTraceMessage("Word added");
         }
     }
 }
