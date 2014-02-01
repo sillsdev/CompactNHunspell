@@ -39,6 +39,11 @@ namespace CompactNHunspell
         private StreamWriter outputWriter;
 
         /// <summary>
+        /// Indicates if verbose console logging should be on
+        /// </summary>
+        private bool verbose;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
         /// </summary>
         /// <param name='affFile'>
@@ -49,11 +54,18 @@ namespace CompactNHunspell
         /// </param>
         public NHunspellWrapper(string affFile, string dictFile)
         {
+            var verboseSetting = System.Configuration.ConfigurationManager.AppSettings["CompactNHunspell.Verbose"];
+            if (!string.IsNullOrEmpty(verboseSetting))
+            {
+                // This is being eaten, a failure case will just disable verbose logging
+                bool.TryParse(verboseSetting, out this.verbose);
+            }
+
             var traceFile = System.Configuration.ConfigurationManager.AppSettings["CompactNHunspell.TraceFile"];
             this.WriteDiagnostics(traceFile);
             if (!string.IsNullOrEmpty(traceFile))
             {
-                this.outputWriter = new StreamWriter(traceFile);
+                this.outputWriter = new StreamWriter(traceFile, false);
                 this.WriteMessage("Trace stream initialized");
             }
 
@@ -242,9 +254,10 @@ namespace CompactNHunspell
         /// <param name='message'>Trace/debug message</param>
         private void WriteDiagnostics(string message)
         {
-#if DEBUGVERBOSE
-        System.Console.WriteLine(message);
-#endif
+            if (this.verbose)
+            {
+                System.Console.WriteLine(message);
+            }
         }
 
         /// <summary>

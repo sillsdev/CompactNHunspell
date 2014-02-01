@@ -17,7 +17,10 @@ Debugging
 ```text
 <add key="CompactNHunspell.TraceFile" value="path/to/a/trace/location" />
 ```
-* DEBUGVERBOSE builds will write to Console
+* To write to the console:
+```text
+<add key="CompactNHunspell.Verbose" value="true" />
+```
 * Mono only: If it seems that the underlying hunspell libraries are not loading, try running the application and looking for library load failures for hunspell itself:
 ```text
 MONO_LOG_LEVEL=debug mono <application>
