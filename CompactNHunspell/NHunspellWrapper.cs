@@ -41,6 +41,15 @@ namespace CompactNHunspell
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
+        /// <remarks>Load must be called when using this constructor</remarks>
+        /// </summary>
+        public NHunspellWrapper()
+        {
+            this.logger = new SimpleLogger("CompactNHunspell.Verbose", "CompactNHunspell.TraceFile");
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
         /// </summary>
         /// <param name='affFile'>
         /// Affix file.
@@ -49,8 +58,8 @@ namespace CompactNHunspell
         /// Dict file.
         /// </param>
         public NHunspellWrapper(string affFile, string dictFile)
+           : this()
         {
-            this.logger = new SimpleLogger("CompactNHunspell.Verbose", "CompactNHunspell.TraceFile");
             this.Load(affFile, dictFile);
         }
         
