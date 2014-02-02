@@ -27,7 +27,7 @@ Debugging
 ```
 * To restrict the logger to the CompactNHunspell module (ignore the LogActions etting)
 ```text
-<add key="CompactNHunspell.Restrict" value="true" />
+<add key="CompactNHunspell.Restricted" value="true" />
 ```
 * Mono only: If it seems that the underlying hunspell libraries are not loading, try running the application and looking for library load failures for hunspell itself:
 ```text
