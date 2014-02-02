@@ -104,7 +104,7 @@ namespace Common
         /// <returns>Diagnostic message to output</returns>
         private static string CreateMessage(Type type, string message)
         {
-            return DateTime.Now.ToString("u") + " : " + type.Name + " -> " + message;
+            return DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff") + " : " + type.Name + " -> " + message;
         }
    
         /// <summary>
