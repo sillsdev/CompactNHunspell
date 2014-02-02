@@ -91,6 +91,13 @@ namespace CompactNHunspell.Tests
                 throw new Exception("notaword should not be considered spelled correctly");
             }
 
+            // Clearing the cache
+            wrap.Clear();
+            if (!wrap.Spell("notaword"))
+            {
+                throw new Exception("notaword should be considered spelled correctly");
+            }
+
             if (!wrap.Spell("word"))
             {
                 throw new Exception("word should be considered spelled correctly");

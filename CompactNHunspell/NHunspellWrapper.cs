@@ -104,6 +104,14 @@ namespace CompactNHunspell
                 this.logAction = value;
             }
         }
+
+        /// <summary>
+        /// Clear the underlying cache of previously checked words 
+        /// </summary>
+        public void Clear()
+        {
+            this.cachedWords.Clear();
+        }
   
         /// <summary>
         /// Load the specified affixFile and dictFile.
