@@ -11,6 +11,7 @@ namespace CompactNHunspell
     using System.Collections.Generic;
     using System.IO;
     using System.Runtime.InteropServices;
+    using Common;
  
     /// <summary>
     /// NHunspell wrapper.
@@ -24,11 +25,6 @@ namespace CompactNHunspell
     public class NHunspellWrapper : IDisposable
     {
         /// <summary>
-        /// Flush the buffer to disk when it hits this length
-        /// </summary>
-        private const int FlushAt = 8192;
-
-        /// <summary>
         /// The cached words and their status
         /// </summary>
         private IDictionary<string, bool> cachedWords = new Dictionary<string, bool>(StringComparer.CurrentCulture);
@@ -39,24 +35,9 @@ namespace CompactNHunspell
         private BaseHunspell speller;
 
         /// <summary>
-        /// Indicates if the buffer is in use for logging
+        /// Simple buffer-backed logger
         /// </summary>
-        private bool useBuffer;
-
-        /// <summary>
-        /// Buffer file to save to
-        /// </summary>
-        private string bufferFile;
-
-        /// <summary>
-        /// Buffer diagnostic messages
-        /// </summary>
-        private System.Text.StringBuilder buffer = new System.Text.StringBuilder();
-
-        /// <summary>
-        /// Indicates if verbose console logging should be on
-        /// </summary>
-        private bool verbose;
+        private SimpleLogger logger = new SimpleLogger();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
@@ -69,21 +50,7 @@ namespace CompactNHunspell
         /// </param>
         public NHunspellWrapper(string affFile, string dictFile)
         {
-            var verboseSetting = System.Configuration.ConfigurationManager.AppSettings["CompactNHunspell.Verbose"];
-            if (!string.IsNullOrEmpty(verboseSetting))
-            {
-                // This is being eaten, a failure case will just disable verbose logging
-                bool.TryParse(verboseSetting, out this.verbose);
-            }
-
-            this.bufferFile = System.Configuration.ConfigurationManager.AppSettings["CompactNHunspell.TraceFile"];
-            this.WriteDiagnostics(this.bufferFile);
-            if (!string.IsNullOrEmpty(this.bufferFile))
-            {
-                this.useBuffer = true;
-                this.WriteMessage("Trace stream initialized");
-            }
-
+            this.logger = new SimpleLogger("CompactNHunspell.Verbose", "CompactNHunspell.TraceFile");
             this.Load(affFile, dictFile);
         }
         
@@ -215,7 +182,7 @@ namespace CompactNHunspell
                 }
 
                 this.WriteMessage("About to close output writer");
-                this.FlushBuffer(true);
+                this.logger.Flush();
             }
         }
         
@@ -243,42 +210,13 @@ namespace CompactNHunspell
         }
 
         /// <summary>
-        /// Create a diagnostic message
-        /// </summary>
-        /// <param name='type'>Type requesting the write</param>
-        /// <param name='message'>Trace/debug message</param>
-        /// <returns>Diagnostic message to output</returns>
-        private static string CreateMessage(Type type, string message)
-        {
-            return type.Name + " -> " + message;
-        }
-
-        /// <summary>
         /// Write a trace message using a given type
         /// </summary>
         /// <param name='type'>Type requesting the write</param>
         /// <param name='message'>Trace/debug message</param>
         private void WriteMessage(Type type, string message)
         {
-            var msg = CreateMessage(type, message);
-            this.WriteDiagnostics(msg);
-            if (this.useBuffer)
-            {
-                this.buffer.AppendLine(msg);
-                this.FlushBuffer(false);
-            }
-        }
-   
-        /// <summary>
-        /// Write a trace message using a given type to the console (verbose diagnostics)
-        /// </summary>
-        /// <param name='message'>Trace/debug message</param>
-        private void WriteDiagnostics(string message)
-        {
-            if (this.verbose)
-            {
-                System.Console.WriteLine(message);
-            }
+            this.logger.WriteMessage(type, message);
         }
 
         /// <summary>
@@ -288,32 +226,6 @@ namespace CompactNHunspell
         private void WriteMessage(string message)
         {
             this.WriteMessage(typeof(NHunspellWrapper), message);
-        }
-
-        /// <summary>
-        /// Flush the internal buffer to file
-        /// </summary>
-        /// <param name='force'>Force output writing</param>
-        private void FlushBuffer(bool force)
-        {
-            try
-            {
-                if (this.useBuffer)
-                {
-                    if (this.buffer.Length > FlushAt || force)
-                    {
-                        this.buffer.AppendLine(CreateMessage(this.GetType(), "Flushing buffer"));
-                        File.AppendAllText(this.bufferFile, this.buffer.ToString());
-                        this.buffer.Length = 0;
-                        this.buffer.Capacity = 0;
-                    }
-                }
-            }
-            catch
-            {
-                // Can't write to the diagnostic output file, send something to verbose and keep going
-                this.WriteDiagnostics("Unable to flush buffer");
-            }
         }
     }
 }
