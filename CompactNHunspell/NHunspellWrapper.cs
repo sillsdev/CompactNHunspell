@@ -40,6 +40,11 @@ namespace CompactNHunspell
         private SimpleLogger logger = new SimpleLogger();
 
         /// <summary>
+        /// Given log action (use instead of the logger action)
+        /// </summary>
+        private Action<Type, string> logAction = null;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
         /// <remarks>Load must be called when using this constructor</remarks>
         /// </summary>
@@ -75,6 +80,22 @@ namespace CompactNHunspell
             {
                 this.WriteMessage("IsDisposed");
                 return this.speller == null;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the logging action to use
+        /// </summary>
+        public Action<Type, string> LogAction
+        {
+            get
+            {
+                return this.logAction ?? this.logger.WriteMessage;
+            }
+
+            set
+            {
+                this.logAction = value;
             }
         }
   

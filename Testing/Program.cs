@@ -107,6 +107,22 @@ namespace CompactNHunspell.Tests
             {
                 throw new Exception("Wrapper shouldn't be disposed yet");
             }
+
+            string test = string.Empty;
+            wrap.LogAction = (x, y) => { test = "done"; };
+            wrap.LogAction.Invoke(typeof(Program), "done");
+            if (test != "done")
+            {
+                throw new Exception("Unable to change logger, value was " + test);
+            }
+
+            test = null;
+            wrap.LogAction = null;
+            wrap.LogAction.Invoke(typeof(Program), "done");
+            if (test != null)
+            {
+                throw new Exception("Value should not have been set");
+            }
         }
     }
 }
