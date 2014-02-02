@@ -246,7 +246,7 @@ namespace CompactNHunspell
         /// <param name='message'>Trace/debug message</param>
         private void WriteMessage(Type type, string message)
         {
-            this.logger.WriteMessage(type, message);
+            this.LogAction(type, message);
         }
 
         /// <summary>
