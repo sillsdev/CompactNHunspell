@@ -1,7 +1,9 @@
 buildType=Release
 affFile=en_US.aff
 dictFile=en_US.dict
-all: build test
+all: build
+
+full: build test
 
 build:
 	xbuild /property:Configuration="$(buildType)" CompactNHunspell.sln
