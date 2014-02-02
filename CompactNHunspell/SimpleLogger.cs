@@ -52,24 +52,27 @@ namespace Common
         /// <summary>
         /// Initializes a new instance of the <see cref="Common.SimpleLogger"/> class.
         /// </summary>
-        /// <param name='verboseOption'>Configuration key value to get a value indicating if verbose (console) logging is on (when true)</param>
-        /// <param name='traceFileSetting'>Configuration key value to get a path to write a trace file to (appends to)</param>
-        public SimpleLogger(string verboseOption, string traceFileSetting)
+        /// <param name='categoryName'>Category name to read value from the configuration</param>
+        public SimpleLogger(string categoryName)
         {
-            var verboseSetting = System.Configuration.ConfigurationManager.AppSettings[verboseOption];
-            if (!string.IsNullOrEmpty(verboseSetting))
-            {
-                // This is being eaten, a failure case will just disable verbose logging
-                bool.TryParse(verboseSetting, out this.verbose);
-            }
-
-            this.bufferFile = System.Configuration.ConfigurationManager.AppSettings[traceFileSetting];
+            this.verbose = GetConfigBool(string.Format("{0}.Verbose", categoryName));
+            this.Restricted = GetConfigBool(string.Format("{0}.Restricted", categoryName));
+            this.bufferFile = System.Configuration.ConfigurationManager.AppSettings[string.Format("{0}.TraceFile", categoryName)];
             this.WriteDiagnostics(this.bufferFile);
             if (!string.IsNullOrEmpty(this.bufferFile))
             {
                 this.useBuffer = true;
                 this.WriteMessage(typeof(SimpleLogger), "Trace stream initialized");
-            }
+            }             
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the logging has been flagged and should be restricted to the current module
+        /// </summary>
+        public bool Restricted
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -94,6 +97,24 @@ namespace Common
         public void Flush()
         {
             this.FlushBuffer(true);
+        }
+
+        /// <summary>
+        /// Checks whether a given key is in the configuration file AND set to true (else false)
+        /// </summary>
+        /// <param name='key'>Key to check</param>
+        /// <returns>True if the configuration value is true</returns>
+        private static bool GetConfigBool(string key)
+        {
+            bool flagValue = false;
+            var val = System.Configuration.ConfigurationManager.AppSettings[key];
+            if (!string.IsNullOrEmpty(val))
+            {
+                // Eat the configuration settings if it isn't a boolean
+                bool.TryParse(val, out flagValue);
+            }
+ 
+            return flagValue;
         }
 
         /// <summary>

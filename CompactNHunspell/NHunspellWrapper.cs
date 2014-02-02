@@ -50,7 +50,7 @@ namespace CompactNHunspell
         /// </summary>
         public NHunspellWrapper()
         {
-            this.logger = new SimpleLogger("CompactNHunspell.Verbose", "CompactNHunspell.TraceFile");
+            this.logger = new SimpleLogger("CompactNHunspell");
         }
 
         /// <summary>
@@ -90,7 +90,13 @@ namespace CompactNHunspell
         {
             get
             {
-                return this.logAction ?? this.logger.WriteMessage;
+                var action = this.logAction;
+                if (this.logger.Restricted || action == null)
+                {
+                    action = this.logger.WriteMessage;
+                }
+     
+                return action;
             }
 
             set
