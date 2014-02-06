@@ -25,6 +25,11 @@ namespace CompactNHunspell
     public class NHunspellWrapper : IDisposable
     {
         /// <summary>
+        /// App configuration key for this library
+        /// </summary>
+        private const string SettingsKey = "CompactNHunspell";
+
+        /// <summary>
         /// The cached words and their status
         /// </summary>
         private IDictionary<string, bool> cachedWords = new Dictionary<string, bool>(StringComparer.CurrentCulture);
@@ -45,12 +50,17 @@ namespace CompactNHunspell
         private Action<Type, string> logAction = null;
 
         /// <summary>
+        /// Backing field to given an override type for instancing the underlying spell checker
+        /// </summary>
+        private string overridenType = null;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
         /// <remarks>Load must be called when using this constructor</remarks>
         /// </summary>
         public NHunspellWrapper()
         {
-            this.logger = new SimpleLogger("CompactNHunspell");
+            this.logger = new SimpleLogger(SettingsKey);
         }
 
         /// <summary>
@@ -80,6 +90,29 @@ namespace CompactNHunspell
             {
                 this.WriteMessage("IsDisposed");
                 return this.speller == null;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets an override type name to use to create the underlying spell checker
+        /// </summary>
+        public string OverrideType 
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.overridenType))
+                {
+                    return System.Configuration.ConfigurationManager.AppSettings[string.Format("{0}.{1}", SettingsKey, "OverrideType")];
+                }
+                else
+                {
+                    return this.overridenType;
+                }
+            }
+
+            set
+            {
+                this.overridenType = value;
             }
         }
 
@@ -140,27 +173,39 @@ namespace CompactNHunspell
             dictFile = Path.GetFullPath(dictFile);
             if (!File.Exists(dictFile))
             {
-            this.WriteMessage("dictFile not found");
+                this.WriteMessage("dictFile not found");
                 throw new FileNotFoundException("DIC File not found: " + dictFile);
             }
             
             this.WriteMessage("Files found, creating spell check instance");
-            if (System.Environment.OSVersion.Platform == PlatformID.Unix) 
+            var overrideType = this.OverrideType;
+            if (string.IsNullOrEmpty(overrideType))
             {
-                this.speller = new HunspellLinux();
-            }
-            else
-            {
-                if (IntPtr.Size == 4)
+                if (System.Environment.OSVersion.Platform == PlatformID.Unix) 
                 {
-                    this.speller = new HunspellWinx86();
+                    overrideType = typeof(HunspellLinux).FullName;
                 }
                 else
                 {
-                    this.speller = new HunspellWinx64();
+                    if (IntPtr.Size == 4)
+                    {
+                        overrideType = typeof(HunspellWinx86).FullName;
+                    }
+                    else
+                    {
+                        overrideType = typeof(HunspellWinx64).FullName;
+                    }
                 }
             }
 
+            this.WriteMessage("Using type: " + overrideType);
+            Type instanceType = Type.GetType(overrideType);
+            if (instanceType == null || !instanceType.IsSubclassOf(typeof(BaseHunspell)))
+            {
+                throw new ArgumentException("Invalid Hunspell instance type");
+            }
+
+            this.speller = (BaseHunspell)Activator.CreateInstance(instanceType);
             this.WriteMessage("Spell check instance created");
             if (this.speller != null)
             {

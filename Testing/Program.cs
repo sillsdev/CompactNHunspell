@@ -59,6 +59,24 @@ namespace CompactNHunspell.Tests
                             }
                         }
                     }
+ 
+                    // Invalid type
+                    using (NHunspellWrapper wrap = new NHunspellWrapper())
+                    {
+                        wrap.OverrideType = "failure.type";
+                        try
+                        {
+                            wrap.Load(args[0], args[1]);
+                            Test(wrap);
+                        }
+                        catch (ArgumentException argExp)
+                        {
+                            if (!argExp.Message.Contains("Invalid Hunspell instance type"))
+                            {
+                                throw;
+                            }
+                        }
+                    }
                 }
                 catch (Exception ex)
                 {
