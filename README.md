@@ -29,6 +29,10 @@ Debugging
 ```text
 <add key="CompactNHunspell.Restrict" value="true" />
 ```
+* To force the use specific underlying spell checker set the following (using types derived from the BaseHunspell class)
+```text
+<add key="CompactNHunspell.OverrideType" value="CompactNHunspell.HunspellLinux" />
+```
 * Mono only: If it seems that the underlying hunspell libraries are not loading, try running the application and looking for library load failures for hunspell itself:
 ```text
 MONO_LOG_LEVEL=debug mono <application>
