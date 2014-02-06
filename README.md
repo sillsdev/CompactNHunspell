@@ -27,7 +27,7 @@ Debugging
 ```
 * To restrict the logger to the CompactNHunspell module (ignore the LogActions etting)
 ```text
-<add key="CompactNHunspell.Restrict" value="true" />
+<add key="CompactNHunspell.Restricted" value="true" />
 ```
 * To force the use specific underlying spell checker set the following (using types derived from the BaseHunspell class)
 ```text
