@@ -181,7 +181,7 @@ namespace CompactNHunspell
             var overrideType = this.OverrideType;
             if (string.IsNullOrEmpty(overrideType))
             {
-                if (System.Environment.OSVersion.Platform == PlatformID.Unix) 
+                if (System.Environment.OSVersion.Platform == PlatformID.Unix || System.Environment.OSVersion.Platform == PlatformID.MacOSX) 
                 {
                     overrideType = typeof(HunspellLinux).FullName;
                 }
