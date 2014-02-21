@@ -55,6 +55,11 @@ namespace CompactNHunspell
         private string overridenType = null;
 
         /// <summary>
+        /// Cache size at which the internal cache is entirely cleared and reset
+        /// </summary>
+        private int cacheSize = int.MaxValue;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
         /// <remarks>Load must be called when using this constructor</remarks>
         /// </summary>
@@ -90,6 +95,26 @@ namespace CompactNHunspell
             {
                 this.WriteMessage("IsDisposed");
                 return this.speller == null;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the size at which the internal cache will automatically be cleared. Defaults to int.MaxValue
+        /// <remarks>Ignores values less than 1</remarks>
+        /// </summary>
+        public int CacheSize
+        {
+            get
+            {
+                return this.cacheSize;
+            }
+
+            set
+            {
+                if (value > 0)
+                {
+                    this.cacheSize = value;
+                }
             }
         }
 
@@ -237,6 +262,13 @@ namespace CompactNHunspell
                 throw new InvalidOperationException("Speller not initialized");
             }
             
+            // Dump the cache once it goes over the cache size
+            if (this.cachedWords.Count > this.CacheSize)
+            {
+                this.WriteMessage("Dumping the cache");
+                this.Clear();
+            }
+
             this.WriteMessage("Checking cache");
             if (!this.cachedWords.ContainsKey(word))
             {

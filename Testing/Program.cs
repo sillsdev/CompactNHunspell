@@ -148,6 +148,19 @@ namespace CompactNHunspell.Tests
             {
                 throw new Exception("Value should not have been set");
             }
+
+            if (wrap.Spell("flushCacheTest"))
+            {
+                throw new Exception("flushCacheTest should not be considered spelled correctly");
+            }
+
+            // Limit the cache size, check the word is still not valid
+            wrap.CacheSize = 1;
+            wrap.Add("flushCacheTest");
+            if (!wrap.Spell("flushCacheTest"))
+            {
+                throw new Exception("flushCacheTest should be considered spelled correctly");
+            }
         }
     }
 }
