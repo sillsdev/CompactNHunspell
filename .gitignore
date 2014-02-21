@@ -16,3 +16,4 @@ dll/*
 *.csproj~
 Testing/*.exe
 Testing/*.dll
+*.zip
