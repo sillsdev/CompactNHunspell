@@ -100,7 +100,7 @@ namespace CompactNHunspell
 
         /// <summary>
         /// Gets or sets the size at which the internal cache will automatically be cleared. Defaults to int.MaxValue
-        /// <remarks>Ignores values less than 1</remarks>
+        /// <remarks>Set this value to 0 to disable cache flushing entirely</remarks>
         /// </summary>
         public int CacheSize
         {
@@ -114,6 +114,10 @@ namespace CompactNHunspell
                 if (value > 0)
                 {
                     this.cacheSize = value;
+                }
+                else
+                {
+                    this.cacheSize = 0;
                 }
             }
         }
@@ -263,7 +267,7 @@ namespace CompactNHunspell
             }
             
             // Dump the cache once it goes over the cache size
-            if (this.cachedWords.Count > this.CacheSize)
+            if (this.CacheSize > 0 && this.cachedWords.Count > this.CacheSize)
             {
                 this.WriteMessage("Dumping the cache");
                 this.Clear();
