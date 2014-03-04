@@ -266,8 +266,8 @@ namespace CompactNHunspell
                 throw new InvalidOperationException("Speller not initialized");
             }
             
-            // Dump the cache once it goes over the cache size
-            if (this.CacheSize > 0 && this.cachedWords.Count > this.CacheSize)
+            // Dump the cache once it goes over the cache size (or if the cache size is 1, always dump the cache)
+            if (this.CacheSize > 0 && (this.cachedWords.Count > this.CacheSize || this.CacheSize == 1))
             {
                 this.WriteMessage("Dumping the cache");
                 this.Clear();
