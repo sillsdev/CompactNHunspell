@@ -101,6 +101,7 @@ namespace CompactNHunspell
         /// <summary>
         /// Gets or sets the size at which the internal cache will automatically be cleared. Defaults to int.MaxValue
         /// <remarks>Set this value to 0 to disable cache flushing entirely</remarks>
+        /// <remarks>Set this value to 1 to disable the use of the cache at all</remarks>
         /// </summary>
         public int CacheSize
         {
