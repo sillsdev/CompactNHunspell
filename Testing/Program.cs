@@ -154,12 +154,34 @@ namespace CompactNHunspell.Tests
                 throw new Exception("flushCacheTest should not be considered spelled correctly");
             }
 
+            if (wrap.DisableCache)
+            {
+                throw new Exception("Cache should not be disabled");
+            }
+
             // Limit the cache size, check the word is still not valid
             wrap.CacheSize = 1;
             wrap.Add("flushCacheTest");
             if (!wrap.Spell("flushCacheTest"))
             {
                 throw new Exception("flushCacheTest should be considered spelled correctly");
+            }
+
+            if (!wrap.DisableCache)
+            {
+                throw new Exception("Cache should be disabled");
+            }
+
+            wrap.DisableCache = false;
+            if (wrap.DisableCache)
+            {
+                throw new Exception("Cache should not be disabled");
+            }
+
+            wrap.DisableCache = true;
+            if (!wrap.DisableCache)
+            {
+                throw new Exception("Cache should be disabled");
             }
         }
     }

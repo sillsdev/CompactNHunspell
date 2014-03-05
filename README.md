@@ -13,7 +13,7 @@ Requirements
 
 Building
 ========
-* Linux - use make. To (successfully) run the quick tests set the affFile=/path/to/a/en_US.aff file and dictFile=/path/to/a/en_US.dic file
+* Linux - use make. To (successfully) run the quick tests set the affFile=/path/to/a/en_US.aff file and dictFile=/path/to/a/en_US.dic file or libPath=/path/to/spell/dir/
 
 Debugging
 =========

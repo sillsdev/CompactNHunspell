@@ -30,6 +30,16 @@ namespace CompactNHunspell
         private const string SettingsKey = "CompactNHunspell";
 
         /// <summary>
+        /// Default cache size to use (if not set)
+        /// </summary>
+        private const int DefaultCacheSize = int.MaxValue;
+
+        /// <summary>
+        /// Value that indicates if the cache is disabled
+        /// </summary>
+        private const int CacheDisabled = 1;
+
+        /// <summary>
         /// The cached words and their status
         /// </summary>
         private IDictionary<string, bool> cachedWords = new Dictionary<string, bool>(StringComparer.CurrentCulture);
@@ -57,7 +67,7 @@ namespace CompactNHunspell
         /// <summary>
         /// Cache size at which the internal cache is entirely cleared and reset
         /// </summary>
-        private int cacheSize = int.MaxValue;
+        private int cacheSize = DefaultCacheSize;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
@@ -143,6 +153,29 @@ namespace CompactNHunspell
             set
             {
                 this.overridenType = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to disable the cache or not
+        /// </summary>
+        public bool DisableCache
+        {
+            get
+            {
+                return this.CacheSize == CacheDisabled;
+            }
+
+            set
+            {
+                if (value)
+                {
+                    this.CacheSize = CacheDisabled;
+                }
+                else
+                {
+                    this.CacheSize = DefaultCacheSize;
+                }
             }
         }
 
@@ -268,7 +301,7 @@ namespace CompactNHunspell
             }
             
             // Dump the cache once it goes over the cache size (or if the cache size is 1, always dump the cache)
-            if (this.CacheSize > 0 && (this.cachedWords.Count > this.CacheSize || this.CacheSize == 1))
+            if (this.CacheSize > 0 && (this.cachedWords.Count > this.CacheSize || this.CacheSize == CacheDisabled))
             {
                 this.WriteMessage("Dumping the cache");
                 this.Clear();
