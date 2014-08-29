@@ -70,6 +70,11 @@ namespace CompactNHunspell
         private int cacheSize = DefaultCacheSize;
 
         /// <summary>
+        /// Indicates if the instance is disposed
+        /// </summary>
+        private bool disposed = false;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
         /// <remarks>Load must be called when using this constructor</remarks>
         /// </summary>
@@ -104,7 +109,7 @@ namespace CompactNHunspell
             get
             {
                 this.WriteMessage("IsDisposed");
-                return this.speller == null;
+                return this.speller == null && this.disposed;
             }
         }
 
@@ -239,12 +244,12 @@ namespace CompactNHunspell
                 this.WriteMessage("dictFile not found");
                 throw new FileNotFoundException("DIC File not found: " + dictFile);
             }
-            
+
             this.WriteMessage("Files found, creating spell check instance");
             var overrideType = this.OverrideType;
             if (string.IsNullOrEmpty(overrideType))
             {
-                if (System.Environment.OSVersion.Platform == PlatformID.Unix || System.Environment.OSVersion.Platform == PlatformID.MacOSX) 
+                if (System.Environment.OSVersion.Platform == PlatformID.Unix || System.Environment.OSVersion.Platform == PlatformID.MacOSX)
                 {
                     overrideType = typeof(HunspellLinux).FullName;
                 }
@@ -331,20 +336,10 @@ namespace CompactNHunspell
         /// </remarks>
         public void Dispose()
         {
-            this.WriteMessage("Disposing");
-            if (!this.IsDisposed)
-            {
-                if (this.speller != null)
-                {
-                    this.speller.Free();
-                    this.speller = null;
-                }
-
-                this.WriteMessage("About to close output writer");
-                this.logger.Flush();
-            }
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
-        
+
         /// <summary>
         /// Add the specified word to the dictionary
         /// </summary>
@@ -368,6 +363,30 @@ namespace CompactNHunspell
             this.WriteMessage("Add is complete");
         }
 
+        /// <summary>
+        /// Dispose of the instance
+        /// </summary>
+        /// <param name="disposing">True when called from Dispose()</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.WriteMessage("Disposing");
+                if (!this.disposed)
+                {
+                    if (this.speller != null)
+                    {
+                        this.speller.Free();
+                        this.speller = null;
+                    }
+
+                    this.WriteMessage("About to close output writer");
+                    this.logger.Flush();
+                    this.disposed = true;
+                }
+            }
+        }
+        
         /// <summary>
         /// Write a trace message using a given type
         /// </summary>

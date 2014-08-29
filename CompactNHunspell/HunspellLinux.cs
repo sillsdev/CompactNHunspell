@@ -14,15 +14,36 @@ namespace CompactNHunspell
     /// <summary>
     /// Hunspell Linux.
     /// </summary>
-    /// <exception cref='InvalidOperationException'>
-    /// Is thrown when an operation cannot be performed because the process is not initialized
-    /// </exception>
     internal class HunspellLinux : BaseHunspell
     {
         /// <summary>
         /// Lib Hunspell 1.3
         /// </summary>
         private const string LibHunspell = "libhunspell-1.3.so.0";
+
+        /// <inheritdoc />
+        protected override BaseHunspell.FreeHandle FreeResource
+        {
+            get { return Hunspell_destroy; }
+        }
+
+        /// <inheritdoc />
+        protected override BaseHunspell.CreateHandle CreateResource
+        {
+            get { return Hunspell_create; }
+        }
+
+        /// <inheritdoc />
+        protected override BaseHunspell.SpellCheck CheckSpelling
+        {
+            get { return Hunspell_spell; }
+        }
+
+        /// <inheritdoc />
+        protected override BaseHunspell.AddWord AddDictionaryWord
+        {
+            get { return Hunspell_add; }
+        }
 
         /// <summary>
         /// Hunspell free.
@@ -75,75 +96,5 @@ namespace CompactNHunspell
         /// </returns>
         [DllImport(LibHunspell)]
         public static extern bool Hunspell_add(IntPtr handle, string word);
-        
-        /// <summary>
-        /// Free the specified handle.
-        /// </summary>
-        /// <param name='handle'>
-        /// Handle to free.
-        /// </param>
-        protected override void Free(IntPtr handle)
-        {
-            this.WriteTraceMessage("Freeing pointer");
-            this.WriteTraceMessage(handle.ToString());
-            Hunspell_destroy(handle);
-            this.WriteTraceMessage("Freeing pointer completed");
-        }
-        
-        /// <summary>
-        /// Initializes the instance.
-        /// </summary>
-        /// <returns>
-        /// The instance.
-        /// </returns>
-        /// <param name='affFile'>
-        /// Affix file.
-        /// </param>
-        /// <param name='dictFile'>
-        /// Dict file.
-        /// </param>
-        protected override IntPtr InitInstance(string affFile, string dictFile)
-        {
-            this.WriteTraceMessage("Creating the instance");
-            this.WriteTraceMessage(affFile);
-            this.WriteTraceMessage(dictFile);
-            return Hunspell_create(affFile, dictFile);
-        }
-  
-        /// <summary>
-        /// Spell check the word
-        /// </summary>
-        /// <param name='handle'>
-        /// Handle to use
-        /// </param>
-        /// <param name='word'>
-        /// Word to check
-        /// </param>
-        /// <returns>True if the word is properly spelled</returns>
-        protected override bool Spell(IntPtr handle, string word)
-        {
-            this.WriteTraceMessage("Performing spell check");
-            this.WriteTraceMessage(handle.ToString());
-            this.WriteTraceMessage(word);
-            return Hunspell_spell(handle, word);
-        }
-        
-        /// <summary>
-        /// Adds the word to the dictionary
-        /// </summary>
-        /// <param name='pointer'>
-        /// Pointer to the instance
-        /// </param>
-        /// <param name='word'>
-        /// Word to add
-        /// </param>
-        protected override void AddWord(IntPtr pointer, string word)
-        {
-            this.WriteTraceMessage("Adding word");
-            this.WriteTraceMessage(pointer.ToString());
-            this.WriteTraceMessage(word);
-            Hunspell_add(pointer, word);
-            this.WriteTraceMessage("Word added");
-        }
     }
 }

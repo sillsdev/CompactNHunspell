@@ -8,7 +8,7 @@ CompactNHunspell requires input of the affix/dict files. These files are require
 
 Requirements
 ============
-* Windows requires the Hunspellx86 or Hunspellx64 libraries (depending on architecture)
+* Windows requires the Hunspellx86 or Hunspellx64 libraries (depending on architecture) - pull NHunspell to get these
 * Linux requires hunspell to be installed (mainly libhunspell). The Linux version is currently using "libhunspell-1.3.so.0" as the reference. If a different name/version is preferred see the example CompactNHunspell.dll.config and this link: http://www.mono-project.com/Interop_with_Native_Libraries
 
 Building
@@ -29,7 +29,7 @@ Debugging
 ```text
 <add key="CompactNHunspell.Restricted" value="true" />
 ```
-* To force the use specific underlying spell checker set the following (using types derived from the BaseHunspell class)
+* To force the use of a specific underlying spell checker set the following (using types derived from the BaseHunspell class)
 ```text
 <add key="CompactNHunspell.OverrideType" value="CompactNHunspell.HunspellLinux" />
 ```

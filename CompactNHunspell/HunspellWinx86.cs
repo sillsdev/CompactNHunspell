@@ -21,7 +21,31 @@ namespace CompactNHunspell
         /// Library for the reference assembly
         /// </summary>
         private const string Library = "Hunspellx86.dll";
-        
+
+        /// <inheritdoc />
+        protected override BaseHunspell.FreeHandle FreeResource
+        {
+            get { return HunspellFree; }
+        }
+
+        /// <inheritdoc />
+        protected override BaseHunspell.CreateHandle CreateResource
+        {
+            get { return (x, y) => this.Initialize(x, y, HunspellInit); }
+        }
+
+        /// <inheritdoc />
+        protected override BaseHunspell.SpellCheck CheckSpelling
+        {
+            get { return HunspellSpell; }
+        }
+
+        /// <inheritdoc />
+        protected override BaseHunspell.AddWord AddDictionaryWord
+        {
+            get { return HunspellAdd; }
+        }
+
         /// <summary>
         /// Hunspell free.
         /// </summary>
@@ -53,7 +77,7 @@ namespace CompactNHunspell
         /// Key if encrypted.
         /// </param>
         [DllImport(Library)]
-        public static extern IntPtr HunspellInit([MarshalAs(UnmanagedType.LPArray)] byte[] affixData, IntPtr affixDataSize, [MarshalAs(UnmanagedType.LPArray)] byte[] dictionaryData, IntPtr dictionaryDataSize, string key);
+        public static extern IntPtr HunspellInit([MarshalAs(UnmanagedType.LPArray)] byte[] affixData, IntPtr affixDataSize, [MarshalAs(UnmanagedType.LPArray)] byte[] dictionaryData, IntPtr dictionaryDataSize, [MarshalAs(UnmanagedType.LPWStr)] string key);
         
         /// <summary>
         /// Check the spelling of a word
@@ -83,102 +107,6 @@ namespace CompactNHunspell
         /// True if word is added
         /// </returns>
         [DllImport(Library)]
-        public static extern bool HunspellAdd(IntPtr handle, string word);
-        
-        /// <summary>
-        /// Free the specified handle.
-        /// </summary>
-        /// <param name='handle'>
-        /// Handle to free.
-        /// </param>
-        protected override void Free(IntPtr handle)
-        {
-            this.WriteTraceMessage("Freeing pointer");
-            this.WriteTraceMessage(handle.ToString());
-            HunspellFree(handle);
-            this.WriteTraceMessage("Freeing pointer completed");
-        }
-        
-        /// <summary>
-        /// Initializes the instance.
-        /// </summary>
-        /// <returns>
-        /// The instance.
-        /// </returns>
-        /// <param name='affFile'>
-        /// Affix file.
-        /// </param>
-        /// <param name='dictFile'>
-        /// Dict file.
-        /// </param>
-        protected override IntPtr InitInstance(string affFile, string dictFile)
-        {
-            this.WriteTraceMessage("Creating the instance");
-            this.WriteTraceMessage(affFile);
-            this.WriteTraceMessage(dictFile);
-            return this.WindowsInit(affFile, dictFile);
-        }
-        
-        /// <summary>
-        /// Invoke the instance with data
-        /// </summary>
-        /// <returns>
-        /// The instance pointer.
-        /// </returns>
-        /// <param name='affixData'>
-        /// Affix data.
-        /// </param>
-        /// <param name='affixSize'>
-        /// Affix size.
-        /// </param>
-        /// <param name='dictData'>
-        /// Dict data.
-        /// </param>
-        /// <param name='dictSize'>
-        /// Dict size.
-        /// </param>
-        protected override IntPtr DataInvoke(byte[] affixData, IntPtr affixSize, byte[] dictData, IntPtr dictSize)
-        {
-            this.WriteTraceMessage("Calling DataInvoke");
-            this.WriteTraceMessage(affixSize.ToString());
-            this.WriteTraceMessage(dictSize.ToString());
-            return HunspellInit(affixData, affixSize, dictData, dictSize, null);
-        }
-        
-        /// <summary>
-        /// Spell check the word
-        /// </summary>
-        /// <param name='handle'>
-        /// Handle to use
-        /// </param>
-        /// <param name='word'>
-        /// Word to check
-        /// </param>
-        /// <returns>True if the word is properly spelled</returns>
-        protected override bool Spell(IntPtr handle, string word)
-        {
-            this.WriteTraceMessage("Performing spell check");
-            this.WriteTraceMessage(handle.ToString());
-            this.WriteTraceMessage(word);
-            return HunspellSpell(handle, word);
-        }
-        
-        /// <summary>
-        /// Adds the word to the dictionary
-        /// </summary>
-        /// <param name='pointer'>
-        /// Pointer to the instance
-        /// </param>
-        /// <param name='word'>
-        /// Word to add
-        /// </param>
-        protected override void AddWord(IntPtr pointer, string word)
-        {
-            this.WriteTraceMessage("Adding word");
-            this.WriteTraceMessage(pointer.ToString());
-            this.WriteTraceMessage(word);
-            HunspellAdd(pointer, word);
-            this.WriteTraceMessage("Word added");
-        }
+        public static extern bool HunspellAdd(IntPtr handle, [MarshalAs(UnmanagedType.LPWStr)] string word);
     }
 }

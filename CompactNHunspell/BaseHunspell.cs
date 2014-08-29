@@ -26,9 +26,100 @@ namespace CompactNHunspell
         private IntPtr handle = IntPtr.Zero;
 
         /// <summary>
+        /// Hunspell destroy/free/cleanup
+        /// </summary>
+        /// <param name='handle'>
+        /// Handle to release.
+        /// </param>
+        protected delegate void FreeHandle(IntPtr handle);
+
+        /// <summary>
+        /// Create an instance
+        /// </summary>
+        /// <returns>Instance pointer</returns>
+        /// <param name='affFile'>
+        /// Affix data.
+        /// </param>
+        /// <param name='dictFile'>
+        /// Dictionary data.
+        /// </param>
+        protected delegate IntPtr CreateHandle(string affFile, string dictFile);
+
+        /// <summary>
+        /// Initializes an instance.
+        /// </summary>
+        /// <returns>
+        /// Pointer to the instance
+        /// </returns>
+        /// <param name='affData'>
+        /// Affix data.
+        /// </param>
+        /// <param name='affPointer'>
+        /// Affix data size.
+        /// </param>
+        /// <param name='dictData'>
+        /// Dictionary data.
+        /// </param>
+        /// <param name='dictPointer'>
+        /// Dictionary data size.
+        /// </param>
+        /// <param name='key'>
+        /// Key if encrypted.
+        /// </param>
+        protected delegate IntPtr InitHandle(byte[] affData, IntPtr affPointer, byte[] dictData, IntPtr dictPointer, string key);
+
+        /// <summary>
+        /// Check the spelling of a word
+        /// </summary>
+        /// <returns>
+        /// True if the word is spelled correctly
+        /// </returns>
+        /// <param name='handle'>
+        /// Instance handle
+        /// </param>
+        /// <param name='word'>
+        /// Word to check
+        /// </param>
+        protected delegate bool SpellCheck(IntPtr handle, string word);
+
+        /// <summary>
+        /// Add the word to the instance
+        /// </summary>
+        /// <param name='handle'>
+        /// Instance handle
+        /// </param>
+        /// <param name='word'>
+        /// Word to add
+        /// </param>
+        /// <returns>
+        /// True if word is added
+        /// </returns>
+        protected delegate bool AddWord(IntPtr handle, string word);
+        
+        /// <summary>
         /// Gets or sets a trace function for diagnostic output
         /// </summary> 
-        public Action<Type, string> TraceFunction { get; set; }
+        internal Action<Type, string> TraceFunction { get; set; }
+
+        /// <summary>
+        /// Gets the call to free the resource
+        /// </summary>
+        protected abstract FreeHandle FreeResource { get; }
+
+        /// <summary>
+        /// Gets the call to create the resource
+        /// </summary>
+        protected abstract CreateHandle CreateResource { get; }
+
+        /// <summary>
+        /// Gets the call to check spelling for a word
+        /// </summary>
+        protected abstract SpellCheck CheckSpelling { get; }
+
+        /// <summary>
+        /// Gets the call to add a word to the dictionary
+        /// </summary>
+        protected abstract AddWord AddDictionaryWord { get; }
 
         /// <summary>
         /// Check if the word is spelled correctly
@@ -51,7 +142,7 @@ namespace CompactNHunspell
             }
 
             this.WriteTrace("Checking");
-            return this.Spell(this.handle, word);
+            return this.CheckSpelling(this.handle, word);
         }
   
         /// <summary>
@@ -68,7 +159,7 @@ namespace CompactNHunspell
             this.WriteTrace("Init");
             this.WriteTrace(affFile);
             this.WriteTrace(dictFile);
-            this.handle = this.InitInstance(affFile, dictFile);
+            this.handle = this.CreateResource(affFile, dictFile);
             this.WriteTrace("Init is complete");
         }
   
@@ -81,7 +172,9 @@ namespace CompactNHunspell
             if (this.handle != IntPtr.Zero)
             {
                 this.WriteTrace("Freeing handle");
-                this.Free(this.handle);
+                this.WriteTrace(this.handle.ToString());
+                this.FreeResource(this.handle);
+                this.WriteTrace("Done freeing handle");
             }
             
             this.WriteTrace("Free is complete");
@@ -100,25 +193,15 @@ namespace CompactNHunspell
             if (this.handle != IntPtr.Zero)
             {
                 this.WriteTrace("Adding word");
-                this.AddWord(this.handle, word);
+                bool wasAdded = this.AddDictionaryWord(this.handle, word);
+                this.WriteTrace("Word was added? " + wasAdded);
             }
             
             this.WriteTrace("Add is complete");
         }
         
         /// <summary>
-        /// Adds the word to the dictionary
-        /// </summary>
-        /// <param name='pointer'>
-        /// Pointer to the instance
-        /// </param>
-        /// <param name='word'>
-        /// Word to add
-        /// </param>
-        protected abstract void AddWord(IntPtr pointer, string word);
-        
-        /// <summary>
-        /// Windows initialize routine
+        /// Initialize routine
         /// </summary>
         /// <returns>
         /// Pointer to the instance
@@ -129,9 +212,10 @@ namespace CompactNHunspell
         /// <param name='dictFile'>
         /// Dict file.
         /// </param>
-        protected IntPtr WindowsInit(string affFile, string dictFile)
+        /// <param name="handleInit">Handle initialize call</param>
+        protected IntPtr Initialize(string affFile, string dictFile, InitHandle handleInit)
         {
-            this.WriteTrace("WindowsInit");
+            this.WriteTrace("Initialize");
             this.WriteTrace(affFile);
             this.WriteTrace(dictFile);
             byte[] affixData;
@@ -152,89 +236,13 @@ namespace CompactNHunspell
                     dictionaryData = reader.ReadBytes((int)stream.Length);
                 }
             }
-            
+
             this.WriteTrace("Read dictFile successfully");
-            return this.DataInvoke(affixData, new IntPtr(affixData.Length), dictionaryData, new IntPtr(dictionaryData.Length));
-        }
-        
-        /// <summary>
-        /// Provides an invoke initializing with data streams instead of file names
-        /// </summary>
-        /// <returns>
-        /// The instance pointer
-        /// </returns>
-        /// <param name='affixData'>
-        /// Affix data.
-        /// </param>
-        /// <param name='affixSize'>
-        /// Affix size.
-        /// </param>
-        /// <param name='dictData'>
-        /// Dictionary data.
-        /// </param>
-        /// <param name='dictSize'>
-        /// Dictionary size.
-        /// </param>
-        protected virtual IntPtr DataInvoke(byte[] affixData, IntPtr affixSize, byte[] dictData, IntPtr dictSize)
-        {
-            this.WriteTrace("DataInvoke");
-            return IntPtr.Zero;
-        }
-  
-        /// <summary>
-        /// Free the specified handle.
-        /// </summary>
-        /// <param name='handle'>
-        /// Handle to free.
-        /// </param>
-        protected abstract void Free(IntPtr handle);
-  
-        /// <summary>
-        /// Initializes the instance.
-        /// </summary>
-        /// <returns>
-        /// The instance.
-        /// </returns>
-        /// <param name='affFile'>
-        /// Affix file.
-        /// </param>
-        /// <param name='dictFile'>
-        /// Dict file.
-        /// </param>
-        protected abstract IntPtr InitInstance(string affFile, string dictFile);
-  
-        /// <summary>
-        /// Spell check the word
-        /// </summary>
-        /// <param name='handle'>
-        /// Handle to use
-        /// </param>
-        /// <param name='word'>
-        /// Word to check
-        /// </param>
-        /// <returns>True if the word is properly spelled</returns>
-        protected abstract bool Spell(IntPtr handle, string word);
-
-        /// <summary>
-        /// Write a trace message using the speller type
-        /// </summary>
-        /// <param name='message'>Trace/debug message</param>
-        protected void WriteTraceMessage(string message)
-        {
-            this.WriteTrace(this.GetType(), message);
-        }
-
-        /// <summary>
-        /// Write a trace message using a given type
-        /// </summary>
-        /// <param name='type'>Type requesting the write</param>
-        /// <param name='message'>Trace/debug message</param>
-        private void WriteTrace(Type type, string message)
-        {
-            if (this.TraceFunction != null)
-            {
-                this.TraceFunction(type, message);
-            }
+            var affixDataPointer = new IntPtr(affixData.Length);
+            this.WriteTrace(affixDataPointer.ToString());
+            var dictDataPointer = new IntPtr(dictionaryData.Length);
+            this.WriteTrace(dictDataPointer.ToString());
+            return handleInit(affixData, affixDataPointer, dictionaryData, dictDataPointer, null);
         }
 
         /// <summary>
@@ -243,7 +251,10 @@ namespace CompactNHunspell
         /// <param name='message'>Trace/debug message</param>
         private void WriteTrace(string message)
         {
-            this.WriteTrace(typeof(BaseHunspell), message);
+            if (this.TraceFunction != null)
+            {
+                this.TraceFunction(this.GetType(), message);
+            }
         }
     }
 }
