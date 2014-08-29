@@ -15,10 +15,10 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyConfiguration("")]
 
-[assembly: AssemblyVersion("1.0.3.0")]
+[assembly: AssemblyVersion("1.0.4.0")]
 
 [assembly: System.CLSCompliant(true)]
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
 
-[assembly: AssemblyFileVersion("1.0.3.0")]
+[assembly: AssemblyFileVersion("1.0.4.0")]
