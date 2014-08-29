@@ -8,7 +8,7 @@ CompactNHunspell requires input of the affix/dict files. These files are require
 
 Requirements
 ============
-* Windows requires the Hunspellx86 or Hunspellx64 libraries (depending on architecture) - pull NHunspell to get these
+* Windows requires the Hunspellx86 or Hunspellx64 libraries (depending on architecture) - pull NHunspell to get these (checkout the powershell script or run it to get dependencies)
 * Linux requires hunspell to be installed (mainly libhunspell). The Linux version is currently using "libhunspell-1.3.so.0" as the reference. If a different name/version is preferred see the example CompactNHunspell.dll.config and this link: http://www.mono-project.com/Interop_with_Native_Libraries
 
 Building
