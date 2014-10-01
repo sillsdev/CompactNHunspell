@@ -8,9 +8,7 @@
 namespace CompactNHunspell
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Runtime.InteropServices;
     
     /// <summary>
     /// Base Hunspell implementation for spelling requests

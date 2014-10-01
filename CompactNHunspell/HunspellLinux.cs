@@ -8,7 +8,6 @@
 namespace CompactNHunspell
 {
     using System;
-    using System.IO;
     using System.Runtime.InteropServices;
     
     /// <summary>
