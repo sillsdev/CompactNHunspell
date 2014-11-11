@@ -8,6 +8,8 @@ before_install:
   - ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
   - brew install hunspell
   - ls -R "/usr/local/Cellar/hunspell/1.3.3"
+  - mkdir CompactNHunspell/bin/Release
+  - cp "CompactNHunspell.macosx.dll.config" "CompactNHunspell/bin/Release/"
   - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/configure.sh"
   - sudo chmod a+x configure.sh
   - ./configure.sh
