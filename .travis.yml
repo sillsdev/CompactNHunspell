@@ -2,16 +2,17 @@ language: objective-c
 
 before_install:
 # Right now testing fails due to dll loading problem (well shared lib)
-#  - wget -O dictionary.zip "http://downloads.sourceforge.net/project/hunspell/Spelling%20dictionaries/en_US/en_US.zip?r=&ts=1409247746&use_mirror=colocrossing"
-#  - sudo mkdir /opt/dictionaries
-#  - sudo unzip dictionary.zip -d /opt/dictionaries
-#  - ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
-#  - brew install hunspell
+  - wget -O dictionary.zip "http://downloads.sourceforge.net/project/hunspell/Spelling%20dictionaries/en_US/en_US.zip?r=&ts=1409247746&use_mirror=colocrossing"
+  - sudo mkdir /opt/dictionaries
+  - sudo unzip dictionary.zip -d /opt/dictionaries
+  - ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
+  - brew install hunspell
+  - ls "/usr/local/Cellar/hunspell/1.3.3"
   - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/configure.sh"
   - sudo chmod a+x configure.sh
   - ./configure.sh
 
 # See above
-#script: make test libPath="/opt/dictionaries/"
+script: make test libPath="/opt/dictionaries/"
 
-script: make build
+#script: make build
