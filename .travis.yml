@@ -6,6 +6,5 @@ before_install:
   - ./configure.sh
   - ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
   - brew install hunspell
-  - hunspell -D
 
-script: make test
+script: make test libPath="/usr/share/myspell/dicts/"
