@@ -14,6 +14,7 @@ before_install:
   - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/configure.sh"
   - sudo chmod a+x configure.sh
   - ./configure.sh
+  - export DYLD_LIBRARY_PATH=/usr/local/Cellar/hunspell/1.3.3/lib:$DYLD_LIBRARY_PATH
 
 # See above
 script: make test libPath="/opt/dictionaries/"
