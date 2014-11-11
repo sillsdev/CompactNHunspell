@@ -15,6 +15,6 @@ before_install:
   - ./configure.sh
 
 # See above
-#script: make test libPath="/opt/dictionaries/"
+script: make test libPath="/opt/dictionaries/"
 
-script: make build
+#script: make build
