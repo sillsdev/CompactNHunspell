@@ -7,7 +7,8 @@ before_install:
   - sudo unzip dictionary.zip -d /opt/dictionaries
   - ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
   - brew install hunspell
-  - mkdir CompactNHunspell/bin/Release
+  - mkdir -p CompactNHunspell/bin/Release
+  - mkdir -p CompactNHunspell.Harness/bin/Release
   - cp "CompactNHunspell.macosx.dll.config" "CompactNHunspell/bin/Release/CompactNHunspell.dll.config"
   - cp "CompactNHunspell.macosx.dll.config" "CompactNHunspell.Harness/bin/Release/CompactNHunspell.dll.config"
   - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/configure.sh"
