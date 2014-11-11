@@ -4,7 +4,5 @@ before_install:
   - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/configure.sh"
   - sudo chmod a+x configure.sh
   - ./configure.sh
-  - ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
-  - brew install hunspell
 
-script: make test libPath="/usr/share/myspell/dicts/"
+script: make build
