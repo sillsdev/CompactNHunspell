@@ -1,0 +1,10 @@
+language: objective-c
+
+before_install:
+  - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/configure.sh"
+  - sudo chmod a+x configure.sh
+  - ./configure.sh
+  - sudo apt-get update -qq > /dev/null
+  - sudo apt-get install -qq hunspell > /dev/null
+
+script: make test
