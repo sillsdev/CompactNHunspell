@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CE5F90DB-CB89-4911-8434-0ADA2F276922}</ProjectGuid>
+    <ProjectGuid>{56FAE14C-CC9F-4137-90D3-036051204B2C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CompactNHunspell</RootNamespace>
-    <AssemblyName>CompactNHunspell</AssemblyName>
+    <RootNamespace>CompactNHunspell.Test</RootNamespace>
+    <AssemblyName>CompactNHunspell.Test</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,23 +31,27 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="nunit.framework">
+      <HintPath>..\bin\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="WrapperTests.cs" />
+    <Compile Include="MockSpeller.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="HunspellWinx64.cs" />
-    <Compile Include="HunspellWinx86.cs" />
-    <Compile Include="HunspellLinux.cs" />
-    <Compile Include="BaseHunspell.cs" />
-    <Compile Include="NHunspellWrapper.cs" />
-    <Compile Include="SimpleLogger.cs" />
-    <Compile Include="ISpeller.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CompactNHunspell\CompactNHunspell.csproj">
+      <Project>{CE5F90DB-CB89-4911-8434-0ADA2F276922}</Project>
+      <Name>CompactNHunspell</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -57,14 +61,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <ProjectExtensions>
-    <MonoDevelop>
-      <Properties>
-        <Policies>
-          <TextStylePolicy inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-csharp" />
-          <CSharpFormattingPolicy inheritsSet="Mono" inheritsScope="text/x-csharp" scope="text/x-csharp" />
-        </Policies>
-      </Properties>
-    </MonoDevelop>
-  </ProjectExtensions>
 </Project>

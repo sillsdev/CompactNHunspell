@@ -1,25 +1,11 @@
 language: objective-c
 
 before_install:
-# Right now testing fails due to dll loading problem (well shared lib)
-  - wget -O dictionary.zip "http://downloads.sourceforge.net/project/hunspell/Spelling%20dictionaries/en_US/en_US.zip?r=&ts=1409247746&use_mirror=colocrossing"
-  - sudo mkdir /opt/dictionaries
-  - sudo unzip dictionary.zip -d /opt/dictionaries
-  - ruby -e "$(curl -fsSkL raw.github.com/mxcl/homebrew/go)"
-  - brew install hunspell --universal
-  - mkdir -p CompactNHunspell/bin/Release
-  - mkdir -p CompactNHunspell.Harness/bin/Release
-  - cp "CompactNHunspell.macosx.dll.config" "CompactNHunspell/bin/Release/CompactNHunspell.dll.config"
-  - cp "CompactNHunspell.macosx.dll.config" "CompactNHunspell.Harness/bin/Release/CompactNHunspell.dll.config"
-  - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/configure.sh"
-  - sudo chmod a+x configure.sh
-  - ./configure.sh
-  - export DYLD_LIBRARY_PATH=/usr/local/Cellar/hunspell/1.3.3/lib:$DYLD_LIBRARY_PATH
+  - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/mono.sh"
+  - sudo chmod a+x mono.sh
+  - ./mono.sh
+  - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/stylecop.sh"
+  - sudo chmod a+x stylecop.sh
+  - ./stylecop.sh
 
-# See above
-#script: make test libPath="/opt/dictionaries/"
-
-script: make build
-
-after_script:
-  - MONO_LOG_LEVEL=debug mono CompactNHunspell.Harness/bin/Release/CompactNHunspell.Harness.exe "/opt/dictionaries/en_US.aff" "/opt/dictionaries/en_US.dic"
+script: make analyze stylecop=/opt/scc/StyleCopCmd.Console.exe

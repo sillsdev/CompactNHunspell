@@ -16,7 +16,7 @@ namespace CompactNHunspell
     /// <exception cref='InvalidOperationException'>
     /// Is thrown when an operation cannot be performed because the speller is not initialized
     /// </exception>
-    internal abstract class BaseHunspell
+    internal abstract class BaseHunspell : ISpeller
     {
         /// <summary>
         /// The handle to the process
@@ -119,16 +119,7 @@ namespace CompactNHunspell
         /// </summary>
         protected abstract AddWord AddDictionaryWord { get; }
 
-        /// <summary>
-        /// Check if the word is spelled correctly
-        /// </summary>
-        /// <param name='word'>
-        /// Word to spell check.
-        /// </param>
-        /// <exception cref='InvalidOperationException'>
-        /// Is thrown when an operation cannot be performed due to not initialized spell engine
-        /// </exception>
-        /// <returns>True if the word is spelled correctly</returns>
+        /// <inheritdoc />
         public bool Spell(string word)
         {
             this.WriteTrace("Spell");
@@ -143,15 +134,7 @@ namespace CompactNHunspell
             return this.CheckSpelling(this.handle, word);
         }
   
-        /// <summary>
-        /// Initialize the specified affix File and dict file to the instance.
-        /// </summary>
-        /// <param name='affFile'>
-        /// Affix file to load
-        /// </param>
-        /// <param name='dictFile'>
-        /// Dict file to load
-        /// </param>
+        /// <inheritdoc />
         public void Init(string affFile, string dictFile)
         {    
             this.WriteTrace("Init");
@@ -161,9 +144,7 @@ namespace CompactNHunspell
             this.WriteTrace("Init is complete");
         }
   
-        /// <summary>
-        /// Free this instance.
-        /// </summary>
+        /// <inheritdoc />
         public void Free()
         {
             this.WriteTrace("Free");
@@ -178,12 +159,7 @@ namespace CompactNHunspell
             this.WriteTrace("Free is complete");
         }
         
-        /// <summary>
-        /// Add the specified word to the internal dictionary
-        /// </summary>
-        /// <param name='word'>
-        /// Word to add to the dictionary.
-        /// </param>
+        /// <inheritdoc />
         public void Add(string word)
         {
             this.WriteTrace("Add");

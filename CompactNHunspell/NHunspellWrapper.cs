@@ -10,6 +10,7 @@ namespace CompactNHunspell
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using Common;
  
     /// <summary>
@@ -46,7 +47,7 @@ namespace CompactNHunspell
         /// <summary>
         /// The speller for spell checking
         /// </summary>
-        private BaseHunspell speller;
+        private ISpeller speller;
 
         /// <summary>
         /// Simple buffer-backed logger
@@ -92,8 +93,24 @@ namespace CompactNHunspell
         /// Dict file.
         /// </param>
         public NHunspellWrapper(string affFile, string dictFile)
+           : this(affFile, dictFile, null)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
+        /// </summary>
+        /// <param name='affFile'>
+        /// Affix file.
+        /// </param>
+        /// <param name='dictFile'>
+        /// Dict file.
+        /// </param>
+        /// <param name='overrideType'>Override type</param>
+        public NHunspellWrapper(string affFile, string dictFile, string overrideType)
            : this()
         {
+            this.overridenType = overrideType;
             this.Load(affFile, dictFile);
         }
         
@@ -233,7 +250,7 @@ namespace CompactNHunspell
             affFile = Path.GetFullPath(affFile);
             if (!File.Exists(affFile))
             {
-            this.WriteMessage("affFile not found");
+                this.WriteMessage("affFile not found");
                 throw new FileNotFoundException("AFF File not found: " + affFile);
             }
 
@@ -267,17 +284,21 @@ namespace CompactNHunspell
 
             this.WriteMessage("Using type: " + overrideType);
             Type instanceType = Type.GetType(overrideType);
-            if (instanceType == null || !instanceType.IsSubclassOf(typeof(BaseHunspell)))
+            if (instanceType == null || !instanceType.GetInterfaces().Contains(typeof(ISpeller)))
             {
                 throw new ArgumentException("Invalid Hunspell instance type");
             }
 
-            this.speller = (BaseHunspell)Activator.CreateInstance(instanceType);
+            this.speller = (ISpeller)Activator.CreateInstance(instanceType);
             this.WriteMessage("Spell check instance created");
             if (this.speller != null)
             {
                 // Attach the trace function
-                this.speller.TraceFunction = (x, y) => { this.WriteMessage(x, y); };            
+                if (this.speller is BaseHunspell)
+                {
+                    ((BaseHunspell)this.speller).TraceFunction = (x, y) => { this.WriteMessage(x, y); };            
+                }
+
                 this.speller.Init(affFile, dictFile);
             }
 
