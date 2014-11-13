@@ -8,4 +8,4 @@ before_install:
   - sudo chmod a+x stylecop.sh
   - ./stylecop.sh
 
-script: make analyze stylecop=/opt/scc/StyleCopCmd.Console.exe
+script: make analyze stylecop=/opt/stylecop/StyleCopCmd.Console.exe
