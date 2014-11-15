@@ -12,7 +12,14 @@ namespace CompactNHunspell
     using System.IO;
     using System.Linq;
     using Common;
- 
+
+    /// <summary>
+    /// Log a message
+    /// </summary>
+    /// <param name="type">Logging type</param>
+    /// <param name="message">Message to log</param>
+    public delegate void Log(Type type, string message);
+        
     /// <summary>
     /// NHunspell wrapper.
     /// </summary>
@@ -57,7 +64,7 @@ namespace CompactNHunspell
         /// <summary>
         /// Given log action (use instead of the logger action)
         /// </summary>
-        private Action<Type, string> logAction = null;
+        private Log logAction = null;
 
         /// <summary>
         /// Backing field to given an override type for instancing the underlying spell checker
@@ -113,7 +120,7 @@ namespace CompactNHunspell
             this.overridenType = overrideType;
             this.Load(affFile, dictFile);
         }
-        
+
         /// <summary>
         /// Gets a value indicating whether this instance is disposed.
         /// </summary>
@@ -203,7 +210,7 @@ namespace CompactNHunspell
         /// <summary>
         /// Gets or sets the logging action to use
         /// </summary>
-        public Action<Type, string> LogAction
+        public Log LogAction
         {
             get
             {
@@ -293,12 +300,7 @@ namespace CompactNHunspell
             this.WriteMessage("Spell check instance created");
             if (this.speller != null)
             {
-                // Attach the trace function
-                if (this.speller is BaseHunspell)
-                {
-                    ((BaseHunspell)this.speller).TraceFunction = (x, y) => { this.WriteMessage(x, y); };            
-                }
-
+                this.speller.TraceFunction = (x, y) => { this.WriteMessage(x, y); };
                 this.speller.Init(affFile, dictFile);
             }
 

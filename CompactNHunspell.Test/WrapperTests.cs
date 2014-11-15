@@ -109,6 +109,36 @@ namespace CompactNHunspell.Test
         }
 
         /// <summary>
+        /// Trace function testing
+        /// </summary>
+        [Test]
+        public void TraceFunction()
+        {
+            var list = new System.Collections.Generic.List<string>();
+            using (NHunspellWrapper wrap = new NHunspellWrapper())
+            {
+                wrap.LogAction = (x, y) => 
+                { 
+                    if (x == typeof(MockSpeller)) 
+                    { 
+                        list.Add(y); 
+                    } 
+                };
+
+                wrap.OverrideType = typeof(MockSpeller).AssemblyQualifiedName;
+                wrap.Load(this.affixFile, this.dictFile);
+                wrap.Spell("test");
+                wrap.Add("test");
+            }
+
+            Assert.AreEqual(4, list.Count, string.Join(Environment.NewLine, list.ToArray()));
+            Assert.IsTrue(list.Contains("Init"));
+            Assert.IsTrue(list.Contains("Spell"));
+            Assert.IsTrue(list.Contains("Add"));
+            Assert.IsTrue(list.Contains("Free"));
+        }
+
+        /// <summary>
         /// Testing setup
         /// </summary>
         [TestFixtureSetUp] 

@@ -13,6 +13,11 @@ namespace CompactNHunspell
     public interface ISpeller
     {
         /// <summary>
+        /// Gets or sets the trace function for logging
+        /// </summary>
+        Log TraceFunction { get; set; }
+
+        /// <summary>
         /// Initialize the specified affix File and dict file to the instance.
         /// </summary>
         /// <param name='affFile'>

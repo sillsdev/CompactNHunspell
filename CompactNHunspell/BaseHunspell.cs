@@ -93,11 +93,9 @@ namespace CompactNHunspell
         /// True if word is added
         /// </returns>
         protected delegate bool AddWord(IntPtr handle, string word);
-        
-        /// <summary>
-        /// Gets or sets a trace function for diagnostic output
-        /// </summary> 
-        internal Action<Type, string> TraceFunction { get; set; }
+
+        /// <inheritdoc />
+        public Log TraceFunction { get; set; }
 
         /// <summary>
         /// Gets the call to free the resource
