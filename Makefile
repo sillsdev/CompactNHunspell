@@ -11,15 +11,14 @@ release: analyze package
 build:
 	xbuild /property:Configuration="$(buildType)" CompactNHunspell.sln
 
-analyze: test
-	mono "$(stylecop)" -s CompactNHunspell.sln -t
-
 test: build
 	nunit-console2 CompactNHunspell.Test/bin/$(buildType)/CompactNHunspell.Test.dll -noshadow
 
-package:
-	zip -j CompactNHunspell-$(version).zip CompactNHunspell/bin/$(buildType)/CompactNHunspell.dll
+analyze: test
+	mono "$(stylecop)" -s CompactNHunspell.sln -t
 
 integrate: analyze
 	mono CompactNHunspell.Harness/bin/$(buildType)/CompactNHunspell.Harness.exe "$(libPath)$(affFile)" "$(libPath)$(dictFile)"
 
+package:
+	zip -j CompactNHunspell-$(version).zip CompactNHunspell/bin/$(buildType)/CompactNHunspell.dll
