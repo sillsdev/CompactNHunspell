@@ -114,11 +114,32 @@ namespace CompactNHunspell
         /// Dict file.
         /// </param>
         /// <param name='overrideType'>Override type</param>
-        public NHunspellWrapper(string affFile, string dictFile, string overrideType)
+        /// <param name='logAction'>Logging action</param>
+        public NHunspellWrapper(string affFile, string dictFile, string overrideType, Log logAction)
            : this()
         {
+            if (logAction != null)
+            {
+                this.LogAction = logAction;
+            }
+ 
             this.overridenType = overrideType;
             this.Load(affFile, dictFile);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompactNHunspell.NHunspellWrapper"/> class.
+        /// </summary>
+        /// <param name='affFile'>
+        /// Affix file.
+        /// </param>
+        /// <param name='dictFile'>
+        /// Dict file.
+        /// </param>
+        /// <param name='overrideType'>Override type</param>
+        public NHunspellWrapper(string affFile, string dictFile, string overrideType)
+            : this(affFile, dictFile, overrideType, null)
+        {
         }
 
         /// <summary>
