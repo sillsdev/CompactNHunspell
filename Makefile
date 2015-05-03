@@ -1,4 +1,5 @@
 buildType=Release
+nunit=nunit-console2
 affFile=en_US.aff
 dictFile=en_US.dic
 stylecop=StyleCopCmd.Console.exe
@@ -12,7 +13,7 @@ build:
 	xbuild /property:Configuration="$(buildType)" CompactNHunspell.sln
 
 test: build
-	nunit-console2 CompactNHunspell.Test/bin/$(buildType)/CompactNHunspell.Test.dll -noshadow
+	"$(nunit)" CompactNHunspell.Test/bin/$(buildType)/CompactNHunspell.Test.dll -noshadow
 
 analyze: test
 	mono "$(stylecop)" -s CompactNHunspell.sln -t

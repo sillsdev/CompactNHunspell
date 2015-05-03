@@ -1,11 +1,8 @@
 language: objective-c
 
 before_install:
-  - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/mono.sh"
-  - sudo chmod a+x mono.sh
-  - ./mono.sh
-  - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/stylecop.sh"
-  - sudo chmod a+x stylecop.sh
-  - ./stylecop.sh
+  - wget "https://raw.githubusercontent.com/enckse/travis-mono-scripts/master/download-all.sh"
+  - sudo chmod a+x download-all.sh
+  - ./download-all.sh
 
-script: make analyze stylecop=/opt/stylecop/StyleCopCmd.Console.exe
+script: make analyze stylecop=/opt/stylecop/StyleCopCmd.Console.exe nunit=./nunit-wrapper
